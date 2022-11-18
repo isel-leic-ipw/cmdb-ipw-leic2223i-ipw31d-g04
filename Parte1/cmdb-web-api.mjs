@@ -1,18 +1,20 @@
 
+//webapi corresponde ao http -api
+//put e get, implementações parecidas
 import services from './cmdb-services.mjs'
 
-function getGroups(req,response){
+ export async function getGroups(req,response){
     console.log(req.query)
-    response.json(services.getGroups())
+   return response.json( services.getGroups())// nao é recursivo apenas vai buscar ao services
 }
 
-function createGroup(req,response){
+export async function createGroup(req,response){// esta funcao é toda marada man
     console.log(req.body)
-    services.createGroup(req.body.name,req.body.desc)
-            .then(g=> response.json(g))
+   await services.createGroup(req.body.name,req.body.desc)
+            .then(g=> response.json(g))// ver o que then faz, ja nao me lembro
 }
 
-function getGroupById(req, response){
+export async function getGroupById(req, response){
 
 }
 
@@ -29,4 +31,4 @@ export const webapi = {
 }
 
 
-export default webapi
+export default webapi//nao entendi o que é isto
