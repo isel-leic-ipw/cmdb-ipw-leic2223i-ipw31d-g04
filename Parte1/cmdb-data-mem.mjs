@@ -1,4 +1,3 @@
-
 const groups= []
 let nextId= 1
 
@@ -19,18 +18,36 @@ function createGroup(name, desc){
     return Promise.resolve(x)   //resolver a promessa de criar o grupo
 }
 
-function getGroupById(id){
+function getGroupsById(id){
+    return groups.find(group => group.id == id)
+}
+
+function deleteGroup(id){
+    const groupsIdx = groups.findIndex(group => group.id == id)
+    if(groupsIdx != -1){
+        groups.splice(groupsIdx,1)
+        return true
+    }
+    return false
+}
+
+function editGroup(id){// a validação tem que ser feita noutro modulo, acho que da para otimizar o do prof
+    const group= groups.find(group => group.id == id)
+    if(group != undefined) {
+        group.title = req.body.title
+        group.description = req.body.description
+        return group
+    }
 
 }
 
-//editGroup
-
-//deleteGroup
 
 export const data = {
     getGroups,
     createGroup,
-    getGroupById,
+    getGroupsById,
+    deleteGroup,
+    editGroup
 }
 
 export default data
