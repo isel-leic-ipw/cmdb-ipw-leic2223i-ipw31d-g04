@@ -41,8 +41,8 @@ export async function deleteGroup(req, rsp) {
 export async function updateGroup(req,rsp){
     await getGroupAndAct(req.params.groupId, rsp, update)
 
-    function update(group) {
-        groupServices.updateGroup(req.params.groupId,group)
+    async function update(group) {
+        await groupServices.updateGroup(req.params.groupId,req.body)
         rsp.status(201)
         rsp.json({
             status: `group with id ${group.id} updated with success`,

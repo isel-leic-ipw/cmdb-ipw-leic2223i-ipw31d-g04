@@ -15,7 +15,7 @@ let groups = new Array(NUM_GROUPS).fill(0, 0, NUM_GROUPS)
         }
     })
 
-let maxId = NUM_TASKS
+let maxId = NUM_GROUPS
 
 
 export async function getGroups(){
@@ -55,8 +55,10 @@ export async function createGroup(groupToCreate){
 export function uptadeGroup(groupId,groupToUpdate){
     const uptadeGroup= groups.find(group => group.id == groupId)
     if(uptadeGroup != undefined) {
-        uptadeGroup.title = groupToUpdate.title
+        const groupIdx = groups.findIndex(group => group.id == groupId)
+        uptadeGroup.name = groupToUpdate.name
         uptadeGroup.description = groupToUpdate.description
+        groups.splice(groupIdx,0,uptadeGroup)
         return uptadeGroup
     } 
 

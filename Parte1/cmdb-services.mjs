@@ -21,7 +21,7 @@ export async function deletedGroup(id){
 }
 
 export async function updateGroup(groupId, groupToUpdate){
-    if(!isAString(groupToUpdate.title))
+    if(!isAString(groupToUpdate.name))
     throw "Invalid Argument"
     if(!isAString(groupToUpdate.description))
     throw "Invalid Argument"
