@@ -51,7 +51,6 @@ export async function updateGroup(req,rsp){
     }
 }
 
-
 async function getGroupAndAct(groupId, rsp, action) {
     const group = await groupServices.getGroup(groupId)
     if(group != undefined) {
@@ -59,4 +58,12 @@ async function getGroupAndAct(groupId, rsp, action) {
     } else {
         rsp.status(404).json({error: `group with id ${groupId} not found`})
     }
+}
+
+export function addMovieToGroup (req,rsp){
+
+}
+
+export function  removeMovieFromGroup(req,rsp){
+
 }
