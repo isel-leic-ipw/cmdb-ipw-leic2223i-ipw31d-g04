@@ -12,6 +12,7 @@ app.use(express.json())   //se o body tiver em formato json na transforma o body
 
 app.get("/group",webapi.getGroups) 
 app.post("/group",webapi.createGroup)
-add.get("/group/:id",webapi.getGroupsById)       //:id significa q o id é parâmetro, supostamente nao e add,é app, se for add preciso de saber o que é
+app.get("/group/:id",webapi.getGroupById)  
+app.put("/group/:id",webapi.editGroup)     
 
-app.listen(Port, ()=>console.log("Listening on PORT:" + Port))    //avisa q já está a ler// nao sabia fazer
+app.listen(Port, ()=>console.log("Listening on PORT:" + Port))    //esta mal temos que alterar
