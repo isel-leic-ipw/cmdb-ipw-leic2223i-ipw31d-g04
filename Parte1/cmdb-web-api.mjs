@@ -1,66 +1,62 @@
 //webapi corresponde ao http -api
 //put e get, implementações parecidas
-import services from './cmdb-services.mjs'
+import * as groupServices from './cmdb-services.mjs'
 
- export async function getGroups(req,response){
-    console.log(req.query)
-   return response.json( services.getGroups())
+ export async function getGroups(req,rsp){
+    const groups = await groupServices.getGroups()
+    rsp.json(groups)
+}
+
+export async function getGroup(req,rsp){
+  await getGroupAndAct(req.params.groupId, rsp, group => rsp.json(group).status(200))
 }
 
 export async function createGroup(req,rsp){
-    console.log(req.body)
-   let g= await services.createGroup(req.body.name,req.body.desc)
-         rsp.status(201).json(g)  
-}
+    try {
+        let newGroup = await groupServices.createGroup(req.body)
+        rsp
+            .status(201)
+            .json({
+                status: `Task with id ${newGroup.id} created with success`,
+                newGroup: newGroup
+            })
 
-export async function getGroupById(req, rsp){
-   let a= await services.getGroupById(req.body.name,req.body.desc)
-    rsp.status(200).json(a)
-}
-
-async function deletedGroup(req, rsp) {
-    const id = req.params.id
-    const deleted = await tasksServices.deleteTask(id)
-    if(deleted) {
-        rsp.status(200).json({status: `group with id ${id} deleted with success`})
-    } else {
-        rsp.status(404).json({error: `group with id ${id} not found`})
+    } catch(e) {
+        rsp
+            .status(400)
+            .json({error: `Error creating task: ${e}`})
     }
 }
 
-async function editGroup(req,rsp){
-    getTaskAndAct(req.params.id, rsp, update)
+export async function deleteGroup(req, rsp) {
+    const groupId = req.params.groupId
+    const deleted = await groupServices.deletedGroup(groupId)
+    if(deleted) {
+        rsp.status(200).json({status: `group with id ${groupId} deleted with success`})
+    } else {
+        rsp.status(404).json({error: `group with id ${groupId} not found`})
+    }
+}
+
+export async function updateGroup(req,rsp){
+    await getGroupAndAct(req.params.groupId, rsp, update)
 
     function update(group) {
+        groupServices.updateGroup(req.params.groupId,group)
         rsp.status(201)
         rsp.json({
-            status: `group with id ${id} updated with success`,
+            status: `group with id ${group.id} updated with success`,
             newgroup: group
             })
     }
 }
-//editGroup --> PUT
-
-//deleteGroup --> DELETE
 
 
-
-export const webapi = {
-    getGroups,
-    createGroup,
-    getGroupById,
-    editGroup,
-    deletedGroup
-}
-
-
-export default webapi//nao entendi o que é isto
-
-async function getTaskAndAct(id, rsp, action) {
-    const group = await services.getTask(id)
+async function getGroupAndAct(groupId, rsp, action) {
+    const group = await groupServices.getGroup(groupId)
     if(group != undefined) {
         action(group)
     } else {
-        rsp.status(404).json({error: `group with id ${id} not found`})
+        rsp.status(404).json({error: `group with id ${groupId} not found`})
     }
 }

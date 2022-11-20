@@ -1,55 +1,69 @@
-const groups= []
+
 let nextId= 1
 
-function getGroups(){
+const NUM_GROUPS = 3
+
+// este código é para ajudar a realizar testes
+let groups = new Array(NUM_GROUPS).fill(0, 0, NUM_GROUPS)
+    .map((_, idx) => {
+        return {
+            id: idx,
+            name: `Group ${idx}`,
+            description: `Group ${idx} description`,
+            movies:[],
+            totalDuration:0
+        }
+    })
+
+let maxId = NUM_TASKS
+
+
+export async function getGroups(){
     return groups   //apenas tem de retornar o array groups
 }
 
-function createGroup(name, desc){
-    const x = {     //x = grupo
-        "id":nextId,
-        "name":name,
-        "desc":desc,
-        "movies":[],
-        "totalDuration":0
-    }
-    groups.push(x)
-    ++nextId
-    return Promise.resolve(x)   //resolver a promessa de criar o grupo
+export function getGroup(groupId){//path
+    return groups.find(group => group.id == groupId)
 }
 
-function getGroupsById(id){//path
-    return groups.find(group => group.id == id)
-}
-
-function deleteGroup(id){//path
-    const groupsIdx = groups.findIndex(group => group.id == id)
-    if(groupsIdx != -1){
-        groups.splice(groupsIdx,1)
+export function deleteGroup(groupId){//path
+    const groupIdx = groups.findIndex(group => group.id == groupId)
+    if(groupIdx != -1){
+        groups.splice(groupIdx,1)
         return true
     }
     return false
 }
 
-function editGroup(groupToEdit){//usa o body e o path,este parametro esta mal, mas preciso dele tambem nao cm parametro
-    // a validação tem que ser feita noutro modulo, acho que da para otimizar o do prof
-    const editedgroup= groups.find(group => group.id == groupToEdit.id)
-    if(editedgroup != undefined) {
-        editedgroup.title = groupToEdit.title
-        editedgroup.description = groupToEdit.description
-        return editedgroup
+export async function createGroup(groupToCreate){
+    let newGroup = {     //x = grupo
+        "id":getNewId(),
+        "name":groupToCreate.name,
+        "description":groupToCreate.description,
+        "movies":[],
+        "totalDuration":0
+    }
+    groups.push(newGroup)
+    return newGroup  //resolver a promessa de criar o grupo
+}
+
+
+
+
+//usa o body e o path,este parametro esta mal, mas preciso dele tambem nao cm parametro
+// a validação tem que ser feita noutro modulo, acho que da para otimizar o do prof
+export function uptadeGroup(groupId,groupToUpdate){
+    const uptadeGroup= groups.find(group => group.id == groupId)
+    if(uptadeGroup != undefined) {
+        uptadeGroup.title = groupToUpdate.title
+        uptadeGroup.description = groupToUpdate.description
+        return uptadeGroup
     } 
 
 } 
 //criar a funcao create random group
 
-
-export const data = {
-    getGroups,
-    createGroup,
-    getGroupsById,
-    deleteGroup,
-    editGroup
+function getNewId() {
+    return maxId++
 }
 
-export default data
