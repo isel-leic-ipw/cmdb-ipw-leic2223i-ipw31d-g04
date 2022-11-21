@@ -1,17 +1,23 @@
-//webapi corresponde ao http -api
-//put e get, implementações parecidas
+//verifyauthentication é usado para verificar se ha token se nao ha dá logo resposta;
+//é uma funcao intermedia
 import * as groupServices from './cmdb-services.mjs'
+//exporta para o exterior,que tem o valor retornado pela funcao verifyAuthentication
+export const getGroups = verifyAuthentication(getGroupsInternal)
+export const getGroup = verifyAuthentication(getGroupInternal)
+export const deleteGroup = verifyAuthentication(deleteGroupInternal)
+export const updateGroup = verifyAuthentication(updateGroupInternal)
+export const createGroup= verifyAuthentication(createGroupInternal)
 
- export async function getGroups(req,rsp){
+ export async function getGroupsInternal(req,rsp){
     const groups = await groupServices.getGroups()
     rsp.json(groups)
 }
 
-export async function getGroup(req,rsp){
+export async function getGroupInternal(req,rsp){
   await getGroupAndAct(req.params.groupId, rsp, group => rsp.json(group).status(200))
 }
 
-export async function createGroup(req,rsp){
+export async function createGroupInternal(req,rsp){
     try {
         let newGroup = await groupServices.createGroup(req.body)
         rsp
@@ -28,7 +34,7 @@ export async function createGroup(req,rsp){
     }
 }
 
-export async function deleteGroup(req, rsp) {
+export async function deleteGroupInternal(req, rsp) {
     const groupId = req.params.groupId
     const deleted = await groupServices.deletedGroup(groupId)
     if(deleted) {
@@ -36,9 +42,10 @@ export async function deleteGroup(req, rsp) {
     } else {
         rsp.status(404).json({error: `group with id ${groupId} not found`})
     }
+    
 }
 
-export async function updateGroup(req,rsp){
+export async function updateGroupInternal(req,rsp){
     await getGroupAndAct(req.params.groupId, rsp, update)
 
     async function update(group) {
@@ -51,6 +58,7 @@ export async function updateGroup(req,rsp){
     }
 }
 
+
 async function getGroupAndAct(groupId, rsp, action) {
     const group = await groupServices.getGroup(groupId)
     if(group != undefined) {
@@ -58,6 +66,22 @@ async function getGroupAndAct(groupId, rsp, action) {
     } else {
         rsp.status(404).json({error: `group with id ${groupId} not found`})
     }
+}
+function verifyAuthentication(handlerFunction) {
+    return function(req, rsp) {
+        let userToken = req.get("Authorization")
+        userToken = userToken ? userToken.split(" ")[1] : null// se userToken entao vai fazer else,:(else) null
+        if(!userToken) {
+            return rsp
+                    .status(401)
+                    .json({error: `User token must be provided`})
+            
+        }
+        req.token = userToken 
+        handlerFunction(req, rsp)
+    
+    }
+    
 }
 
 export function addMovieToGroup (req,rsp){
