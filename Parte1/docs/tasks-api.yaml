@@ -1,0 +1,303 @@
+openapi: 3.0.1
+info:
+  title: Movies API
+  description: This is a simple Movies API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: https://imdb-api.com/api
+  version: 1.0.0
+servers:
+  - description: Localhost server for testing API
+    url: http://localhost:1904/
+
+tags:
+- name: groups
+- name: Users
+
+paths:
+  /users:
+    post:
+      tags:
+      - users
+      summary: adds a user
+      description: Adds a user to the system
+      operationId: addUser
+      requestBody:
+        description: User to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+        required: false
+      responses:
+        201:
+          description: user created
+          content:
+            application/json:
+              schema:
+                required:
+                - token
+                type: object
+                properties:
+                  token:
+                    type: string
+                    format: uuid
+        400:
+          description: Invalid input, object invalid
+          content: {}
+      x-codegen-request-body-name: user
+  /groups:
+    get:
+      tags:
+      - groups
+      summary: get groups
+      description: By passing in the appropriate options, you can search for available
+        groups
+      operationId: getGroups
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: q
+        in: query
+        description: pass an optional search string for looking up groups with that  text
+        schema:
+          type: string
+      - name: skip
+        in: query
+        description: number of records to skip for pagination
+        schema:
+          minimum: 0
+          type: integer
+      - name: limit
+        in: query
+        description: maximum number of records to return
+        schema:
+          maximum: 250
+          minimum: 0
+          type: integer
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/group'
+        400:
+          description: bad input parameter
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequest'
+    post:
+      tags:
+      - groups
+      summary: create a group
+      description: Create a group to the system
+      operationId: createGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: group to create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newGroup'
+        required: false
+      responses:
+        201:
+          description: group created
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createdGroup'
+        400:
+          description: Invalid input, object invalid
+          content: {}
+  /groups/{groupId}:
+    get:
+      tags:
+      - groups
+      summary: Get a group given its id
+      description: Get a group given its id
+      operationId: getGroupById
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        description: ID of group that to be fetched
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/group'
+        400:
+          description: Invalid ID supplied
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/InvalidRequest'
+                example: Invalid ID supplied
+        404:
+          description: group not found
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/InvalidRequest'
+                example: group Not found
+    put:
+      tags:
+      - groups
+      summary: updates a group
+      description: Updates a group in the system
+      operationId: updateGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: groupId
+        in: path
+        description: ID of the group to be updated
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: group to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newGroup'
+        required: false
+      responses:
+        201:
+          description: group updated
+          content: {}
+        404:
+          description: group not found
+          content: {}
+    delete:
+      tags:
+      - groups
+      summary: Delete a group by ID
+      description: Delete a group by ID
+      operationId: deleteGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: groupId
+        in: path
+        description: ID of the group to be deleted
+        required: true
+        schema:
+          type: integer
+      responses:
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: group not found
+          content: {}
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    group:
+      required:
+      - id
+      - name
+      - descritpion
+      - userToken
+      - totalDuration
+
+      
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Study HTTP
+        description:
+          type: string
+          example: group description
+        movies:
+          type: array
+        totalDuration:
+          type: integer
+
+    newGroup:  #nao sei o que é isso, tambem e implementado no do prof mas ele nao tem nenhuma funcao que faca isso
+      required:
+      - name
+      - description
+      - userId #ainda nao usamos isto
+      type: object
+      properties:
+        title:
+          type: string
+          example: Study Http
+        description:
+          type: string
+          example: group description
+        userId:
+          type: integer
+    NewUser: #nao temos isto
+      required:
+      - userName
+      type: object
+      properties:
+        userName:
+          type: string
+          example: joao
+    InvalidRequest:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Missing required parameter"
+    createdGroup:
+      required:
+      - status
+      - group
+      type: object
+      properties:
+        status:
+          type: string
+          example: group with id 123 created with success
+        group:
+          $ref: '#/components/schemas/group'

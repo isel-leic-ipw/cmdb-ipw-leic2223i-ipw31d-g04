@@ -1,6 +1,6 @@
 //falta criar getTaskAndDo usado pelo get e uptade
 import express from 'express'
-import * as webApi from './cmdb-web-api.mjs'
+import * as webApi from './api/cmdb-web-api.mjs'
 //import yaml from 'yamljs'
 //import cors from 'cors'
 
@@ -11,7 +11,7 @@ const PORT = 1904
 app.use(express.json())   //se o body tiver em formato json na transforma o body json num objeto request
 
 app.get("/groups",webApi.getGroups)  // obter todos os grupos
-app.get("/groups/:groupId",webApi.getGroup) // obter um grupo
+app.get("/groups/:groupId",webApi.getGroupsById) // obter um grupo
 app.delete("/groups/:groupId",webApi.deleteGroup) // obter um grupo
 app.post("/groups",webApi.createGroup) // criar grupo
 app.post("/groups/:groupId/movies",webApi.addMovieToGroup) // obter um grupo
