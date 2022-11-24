@@ -10,10 +10,11 @@ import errors from '../errors.mjs'
 
 export async function  getGroups(userToken){// falta muita coisa neste
     return  groupsData.getGroups(userToken)   
+}
 
 export async function getGroupsById(groupId,userToken){// alterar para em vez de token ser user ID
     const user = await usersData.getUser(userToken)
-    if(!user) {
+    if(user==undefined) {
         throw errors.USER_NOT_FOUND()
     }
     const group = await tasksData.getGroupsById(user.id, groupId)
@@ -21,13 +22,13 @@ export async function getGroupsById(groupId,userToken){// alterar para em vez de
         return group
     }
 
-    throw errors.TASK_NOT_FOUND(groupId)
+    throw errors.GROUP_NOT_FOUND(groupId)
 
 }
 export async function createGroup(groupToCreate,userToken){
     const user = await usersData.getUser(userToken)
-    if(!user) {
-        throw errors.USER_NOT_FOUND()
+    if(user==undefined) {
+        throw errors.USER_NOT_FOUND(user.id)
     }
     if(!isAString(userToken, groupToCreate.name)) {
          throw errors.INVALID_PARAMETER('name')
@@ -37,23 +38,24 @@ export async function createGroup(groupToCreate,userToken){
    }
 
 
-    return tasksData.createTask(user.id, groupToCreate)
+    return tasksData.createGroup(groupToCreate,user.id)
 }
 
 export async function deletedGroup(id){
     return groupsData.deleteGroup(id)
 }
-}
 
-export async function updateGroup(groupId, groupToUpdate,userToken){
-    if(NaN(user))
-    throw errors.USER_NOT_FOUND(user.Id)
+
+ export async function updateGroup(groupId, groupToUpdate,userToken){
+    const user=usersData.getUser(userToken)
+    if(user==undefined)
+    throw errors.USER_NOT_FOUND(user.id)
     
     if(!isAString(groupToUpdate.name))
     throw errors.INVALID_ARGUMENT(groupToUpdate.name)
     if(!isAString(groupToUpdate.description))
     throw errors.INVALID_ARGUMENT(groupToUpdate.description)   
-    return groupsData.uptadeGroup(groupId,groupToUpdate)
+    return groupsData.uptadeGroup(groupId,groupToUpdate,user.id)
 }
 
 //Auxiliary Functions
@@ -61,9 +63,3 @@ export async function updateGroup(groupId, groupToUpdate,userToken){
 function isAString(value) {
     return typeof value == 'string' && value != ""
 }
-
-function NaN(value) {
-    return typeof value != Number && value != "" 
-
-}
-
