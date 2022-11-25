@@ -15,7 +15,7 @@ export async function  getGroups(userToken){// falta muita coisa neste
 export async function getGroupsById(groupId,userToken){// alterar para em vez de token ser user ID
     const user = await usersData.getUser(userToken)
     if(user==undefined) {
-        throw errors.USER_NOT_FOUND()
+        throw errors.USER_NOT_FOUND(user.id)
     }
     const group = await tasksData.getGroupsById(user.id, groupId)
     if(group) {
@@ -30,10 +30,10 @@ export async function createGroup(groupToCreate,userToken){
     if(user==undefined) {
         throw errors.USER_NOT_FOUND(user.id)
     }
-    if(!isAString(userToken, groupToCreate.name)) {
+    if(!isAString( groupToCreate.name)) {
          throw errors.INVALID_PARAMETER('name')
     }
-    if(!isAString(userToken, groupToCreate.description)) {
+    if(!isAString( groupToCreate.description)) {
         throw errors.INVALID_PARAMETER('description')
    }
 
@@ -62,4 +62,9 @@ export async function deletedGroup(id){
 
 function isAString(value) {
     return typeof value == 'string' && value != ""
+}
+
+function NaN(value) {
+    return typeof value != Number && value != "" 
+
 }
