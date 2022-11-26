@@ -1,4 +1,5 @@
-// possivel duvida como meter o os dados do movies em memoria
+import {MAX_LIMIT} from "../services/services-constants.mjs";
+
 let nextId= 1
 
 const NUM_GROUPS = 3
@@ -12,85 +13,110 @@ let groups = new Array(NUM_GROUPS).fill(0, 0, NUM_GROUPS)
             description: `Group ${idx} description`,
             movies:[],
             totalDuration:0,
-            userId:0
+            userId: idx%2
         }
     })
 
 let maxId = NUM_GROUPS
 
 
-export async function getGroups(userId,q,limit,skip){
-    const predicate = q ? t => t.name.includes(q) : t => true
+export async function getGroups(userId,q,skip,limit,){
+    const predicate = q ? t => t.title.includes(q) : t => true
     const retGroups = groups
         .filter(t => t.userId == userId)
         .filter(predicate)
-    const end = limit != Infinity ? (skip+limit) : retGroups.length
-    return retTasks.slice(skip,  end)  //apenas tem de retornar o array groups
+    const end = limit != MAX_LIMIT ? (skip + limit) : retGroups.length
+    return groups.slice(skip,end)
 }
 
-export function getGroup(groupId,userId){//path
-    return findTaskAndDoSomething(userId, groupId, group => group)
+export async function getGroupById(userId, groupId){//path
+    //return groups.find(group => group.id == groupId)
+    return findGroupAndDoSomething(userId,groupId,task => task)
 }
 
-export function deleteGroup(groupId,userId){//path
-    return findTaskAndDoSomething(
-        userId, 
-        groupId, 
-        (group,groupIdx) => { 
-            groups.splice(groupIdx, 1)
-            return group // porque deste return de grou
-        })
+export async function deleteGroup(userId, groupId){//path
+    return findGroupAndDoSomething(
+        userId,
+        groupId,
+        (group,groupIdx) => {
+            group.splice(groupIdx,1)
+            return group
+        }
+    )
 }
-/*
-export function deleteGroup(groupId){//path
-    const groupIdx = groups.findIndex(group => group.id == groupId)
-    if(groupIdx != -1){
-        groups.splice(groupIdx,1)
-        return true
-    }
-    return false
-}
-*/
 
-export async function createGroup(groupToCreate,userId,movies){// rever por causa do movie, meter os parametros em vez de array vazio etc
+export async function createGroup(userId,groupToCreate){
     let newGroup = {     //x = grupo
-        "id":getNewId(),
-        "name":groupToCreate.name,
-        "description":groupToCreate.description,
-        "movies":[],
-        "totalDuration":0,
-        "userId":userId
+        id:getNewId(),
+        name:groupToCreate.name,
+        description:groupToCreate.description,
+        movies:[],
+        totalDuration:0,
+        userId: userId
     }
     groups.push(newGroup)
     return newGroup  //resolver a promessa de criar o grupo
 }
 
-
-
-
 //usa o body e o path,este parametro esta mal, mas preciso dele tambem nao cm parametro
 // a validação tem que ser feita noutro modulo, acho que da para otimizar o do prof
-export function updatedGroup(groupId,groupToUpdate){
-    const updateGroup= groups.find(group => group.id == groupId)
-    if(updateGroup != undefined) {
-        const groupIdx = groups.findIndex(group => group.id == groupId)
-        updateGroup.name = groupToUpdate.name
-        updateGroup.description = groupToUpdate.description
-        groups.splice(groupIdx,0,updateGroup)
-        return updateGroup
-    } 
+
+export async function updateGroup(userId, groupId,groupToUpdate){
+    return findGroupAndDoSomething(
+        userId,
+        groupId,
+        (group, groupIdx) => {
+            group.name = groupToUpdate.name
+            group.description = groupToUpdate.description
+            return group
+        })
 }
-//criar a funcao create random group
-function findTaskAndDoSomething(userId, groupId, action) {
+
+export async function addMovieToGroup (userId,groupId, movieId){
+    return findGroupAndDoSomething(
+        userId,
+        groupId,
+        group => {
+            group.movies.push(movieId)
+        }
+    )
+}
+export async function removeMovieFromGroup(userId,groupId, movieId){
+    return findGroupAndDoSomething(
+        userId,
+        groupId,
+        group => {
+            const movieIdx = group.movies.findIndex(movie => movie.id == movieId)
+            if (movieIdx != -1) {
+                group.movies.splice(movieIdx,1)
+            }
+            return group
+        }
+    )
+}
+
+// Auxiliary functions
+function findGroupAndDoSomething(userId, groupId, action) {
     const groupIdx = groups.findIndex(group => group.id == groupId && group.userId == userId)
     const group = groups[groupIdx]
     if(groupIdx != -1) {
-        return action(group, groupIdx)//funcao que retorna uma funcao
-    } 
+        return action(group, groupIdx)
+    }
 }
-
-
 function getNewId() {
     return maxId++
 }
 
+/*
+export function updateGroup(groupId,groupToUpdate){
+    const updateGroup= groups.find(group => group.id == groupId)
+    if(updateGroup != undefined) {
+
+        const groupIdx = groups.findIndex(group => group.id == groupId)
+        updateGroup.name = groupToUpdate.name
+        updateGroup.description = groupToUpdate.description
+        groups.splice(groupIdx,1,updateGroup)
+        return updateGroup
+    }
+}
+*/

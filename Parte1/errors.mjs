@@ -1,15 +1,24 @@
 
+
 export default {
-    INVALID_ARGUMENT: argName => {
+    INVALID_PARAMETER: (argName, description) => {
         return {
-            errorCode:1,
-            description: `Invalid argument ${argName}`
+            code: 1,
+            message: `Invalid argument ${argName}`,
+            description: description
         }
     },
-    GROUP_NOT_FOUND: () =>{
-        return{
-            errorCode:2,
-            description: "Group not found"
+    USER_NOT_FOUND: () => {
+        return {
+            code: 2,
+            message: `User not found`
+        }
+    },
+    GROUP_NOT_FOUND: (idTask) => {
+        return {
+            code: 3,
+            message: `Task with id ${idTask} not found`
         }
     }
+
 }
