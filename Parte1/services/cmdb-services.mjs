@@ -58,7 +58,8 @@ export default function (groupsData, usersData, moviesData) {
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
-        return groupsData.getGroups(user.id, q, skip, limit)     //validar se existe grupos. N é necessário pois se n há grupos, n imprime nada
+        return groupsData.getGroups(user.id, q, skip, limit)     //validar se existe grupos. N é necessário pois se n há grupos, n imprime nada*/
+
     }
 
     async function getGroupsById(userToken, groupId) {
