@@ -31,7 +31,7 @@ export default function (groupsData, usersData, moviesData) {
 
     }
 
-    async function searchPopular( limit) {
+    async function searchPopular(limit) {
         if(isNaN(limit)){
             errors.INVALID_PARAMETER(limit)
         }

@@ -1,5 +1,5 @@
 import  fetch  from 'node-fetch'
-const API_KEY = 'pk_go9k2boozq07og2ii'
+const API_KEY = 'k_o4zms241'
 
 export async function mostPopular(limit){
     const rps = await fetch(`https://imdb-api.com/en/API/Top250Movies/${API_KEY}`)

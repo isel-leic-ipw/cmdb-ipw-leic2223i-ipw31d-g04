@@ -29,8 +29,9 @@ export default function (groupServices) {
         return await groupServices.searchPopular(req.query.limit)
     }
     async function searchByTitleInternal(req, rps) {
-        console.log(req.query.n)
-        return await groupServices.searchByTitle(req.path.title,req.query.limit)
+        const title = req.path.title
+        const limit = req.query.limit
+        return await groupServices.searchByTitle(title,limit)
     }
 
     async function getGroupsInternal(req, rsp) {

@@ -24,7 +24,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(express.json())   //se o body tiver em formato json na transforma o body json num objeto request
 
 
-app.get("/populars/",webApi.searchPopular)
+app.get("/populars",webApi.searchPopular)
 app.get("/populars/:title", webApi.searchByTitle)
 app.post("/users",webApi.createNewUser)  // obter todos os grupos
 app.get("/groups",webApi.getGroups)  // obter todos os grupos
