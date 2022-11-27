@@ -32,11 +32,20 @@ export default function (groupsData, usersData, moviesData) {
     }
 
     async function searchPopular( limit) {
+        if(isNaN(limit)){
+            errors.INVALID_PARAMETER(limit)
+        }
         const movies = await moviesData.mostPopular(limit)
         return movies
     }
 
     async function searchByTitle(title, limit) {
+        if(!isAString(title)){
+            errors.INVALID_PARAMETER(limit)
+        }
+        if(isNaN(limit)){
+            errors.INVALID_PARAMETER(limit)
+        }
         const movies = await moviesData.mostPopularByTitle(title,limit)
         return movies
     }

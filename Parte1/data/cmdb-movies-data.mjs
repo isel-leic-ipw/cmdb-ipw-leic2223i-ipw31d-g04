@@ -1,5 +1,5 @@
 import  fetch  from 'node-fetch'
-const API_KEY = 'k_n372g739'
+const API_KEY = 'pk_go9k2boozq07og2ii'
 
 export async function mostPopular(limit){
     const rps = await fetch(`https://imdb-api.com/en/API/Top250Movies/${API_KEY}`)
@@ -22,7 +22,6 @@ async function  getMovieById (ids){
         "total-duration": 0,
         "movies": []
     }
-
     for(const id of ids){
         let response = await fetch(`https://imdb-api.com/en/API/Title/${API_KEY}/${id}`)
         let movie = await response.json()
