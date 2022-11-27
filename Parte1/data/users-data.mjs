@@ -1,3 +1,5 @@
+import crypto from 'crypto'
+
 const NUM_USERS = 2
 
 let users = new Array(NUM_USERS).fill(0, 0, NUM_USERS)

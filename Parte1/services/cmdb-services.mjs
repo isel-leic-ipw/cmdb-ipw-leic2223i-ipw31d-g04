@@ -3,12 +3,13 @@
 //todos recebem como parametro o taskID(que é o que vem no equest.params.id), mas supostamente eles nao podiam ter acesso a tudo que envolve http
 //import * as groupsData from '../data/imdb-data-mem.mjs'
 //import * as usersData from '../data/users-data.mjs'
-import  *as moviesData from '../cmdb-movies-data.mjs'
+import  *as moviesData from '../data/cmdb-movies-data.mjs'
 import errors from '../errors.mjs'
 import {MAX_LIMIT} from "./services-constants.mjs";
+import {createNewUser} from "../data/users-data.mjs";
 
 
-export default function (groupsData, usersData) {
+export default function (groupsData, usersData, moviesData) {
     // Validate arguments
     if (!groupsData) {
         throw errors.INVALID_PARAMETER('tasksData')
@@ -24,10 +25,21 @@ export default function (groupsData, usersData) {
         updateGroup: updateGroup,
         removeMovieFromGroup: removeMovieFromGroup,
         addMovieToGroup: addMovieToGroup,
-        createUser:createUser
+        createUser:createUser,
+        searchPopular:searchPopular,
+        searchByTitle:searchByTitle
+
     }
 
-    
+    async function searchPopular( limit) {
+        const movies = await moviesData.mostPopular(limit)
+        return movies
+    }
+
+    async function searchByTitle(title, limit) {
+        const movies = await moviesData.mostPopularByTitle(title,limit)
+        return movies
+    }
 
     async function getGroups(userToken, q, skip = 0, limit = MAX_LIMIT) {//obtem os grupos todos, não precisa de parametros
         limit = Number(limit)
@@ -68,7 +80,9 @@ export default function (groupsData, usersData) {
             throw errors.INVALID_PARAMETER(userEmail)
         if (!isAString(userEmail))
             throw errors.INVALID_PARAMETER(password)
-        return groupsData.createUser(userName, userEmail, password)
+        const user = await usersData.createNewUser(userName, userEmail, password)
+
+        return user
     }
 
     async function createGroup(userToken, groupToCreate) {

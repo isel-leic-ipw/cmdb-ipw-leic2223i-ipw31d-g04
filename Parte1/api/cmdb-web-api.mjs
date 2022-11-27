@@ -2,6 +2,7 @@
 //é uma funcao intermedia
 import toHttpResponse from './response-errors.mjs'
 import errors from '../errors.mjs'
+//import {handle} from "express/lib/router/index.js";
 //import * as groupServices from '../services/cmdb-services.mjs'
 //exporta para o exterior,que tem o valor retornado pela funcao verifyAuthentication
 
@@ -18,7 +19,18 @@ export default function (groupServices) {
         updateGroup: handleRequest(updateGroupInternal),
         addMovieToGroup: handleRequest(addMovieToGroupInternal),
         removeMovieFromGroup: handleRequest(removeMovieFromGroupInternal),
-        createNewUser: createNewUser
+        createNewUser: handleRequest(createNewUserInternal),
+        searchPopular: handleRequest(searchPopularInternal),
+        searchByTitle: handleRequest(searchByTitleInternal)
+    }
+
+    async function searchPopularInternal(req, rps) {
+        console.log(req.query.limit)
+        return await groupServices.searchPopular(req.query.limit)
+    }
+    async function searchByTitleInternal(req, rps) {
+        console.log(req.query.n)
+        return await groupServices.searchByTitle(req.path.title,req.query.limit)
     }
 
     async function getGroupsInternal(req, rsp) {
@@ -83,13 +95,15 @@ export default function (groupServices) {
         }
     }
 
-    async function createNewUser(req, rps) {
+    async function createNewUserInternal(req, rps) {
         const userName = req.body.userName
         const userEmail = req.body.userEmail
         const userPassword = req.body.userPassword
         const user = await groupServices.createUser(userName,userEmail,userPassword)
         rps.status (201)
-
+        return{
+            token: user.token
+        }
     }
 
     function handleRequest(handler) {
