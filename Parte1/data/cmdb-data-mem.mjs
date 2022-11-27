@@ -80,7 +80,7 @@ export async function addMovieToGroup (userId,groupId, movie){
     return findGroupAndDoSomething(
         userId,
         groupId,
-        group => {
+        (group,groupIdx) => {
             const movieIdx = group.movies.findIndex(m => m.id == movie.id)
             if (movieIdx == -1){
                 group.movies.push(movie)
@@ -94,7 +94,7 @@ export async function removeMovieFromGroup(userId,groupId, movieId){
     return findGroupAndDoSomething(
         userId,
         groupId,
-        group => {
+        (group,groupIdx) => {
             const movieIdx = group.movies.findIndex(movie => movie.id == movieId)
             if (movieIdx != -1) {
                 group.movies.splice(movieIdx,1)

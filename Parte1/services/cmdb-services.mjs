@@ -54,7 +54,11 @@ export async function deleteGroup(userToken, groupId){
     if(!user){
         throw errors.USER_NOT_FOUND()
     }
-    return groupsData.deleteGroup(user.id, groupId)
+    const group = await groupsData.deleteGroup(user.id, groupId)
+    if(!group){
+        throw errors.GROUP_NOT_FOUND(groupId)
+    }
+    return group
 }
 
 export async function updateGroup(userToken,groupId, groupToUpdate){
