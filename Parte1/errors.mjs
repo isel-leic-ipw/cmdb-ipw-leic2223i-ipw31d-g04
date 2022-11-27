@@ -14,10 +14,21 @@ export default {
             message: `User not found`
         }
     },
-    GROUP_NOT_FOUND: (idTask) => {
+    GROUP_NOT_FOUND: (groupId) => {
         return {
             code: 3,
-            message: `Task with id ${idTask} not found`
+            message: `Group with id ${groupId} not found`
+        }
+    },
+    MOVIE_ALREADY_IN_GROUP: (movieId) =>{
+        return{
+            code: 4,
+            message: `Movie with id ${movieId} already in group`
+        }
+    },MOVIE_NOT_FOUND: (groupId) => {
+        return {
+            code: 5,
+            message: `Movie with id ${groupId} not found`
         }
     }
 

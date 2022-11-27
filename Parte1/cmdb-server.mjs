@@ -15,7 +15,7 @@ app.use(express.json())
 
 const swaggerDocument = yaml.load('./docs/tasks-api.yaml')
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(express.json())   //se o body tiver em formato json na transforma o body json num objeto request
 
@@ -25,7 +25,7 @@ app.get("/groups/:groupId",webApi.getGroupsById) // obter um grupo
 app.delete("/groups/:groupId",webApi.deleteGroup) // obter um grupo
 app.post("/groups",webApi.createGroup) // criar grupo
 app.put("/groups/:groupId/movies/:movieId",webApi.addMovieToGroup) // obter um grupo
-//app.delete("/groups/:groupId/movies/:movieId",webApi.removeMovieFromGroup) // obter um grupo
+app.delete("/groups/:groupId/movies/:movieId",webApi.removeMovieFromGroup) // obter um grupo
 app.put("/groups/:groupId",webApi.updateGroup) // editar grupo
 
 app.listen(PORT, () => console.log(`Server listening in http://localhost:${PORT}`))

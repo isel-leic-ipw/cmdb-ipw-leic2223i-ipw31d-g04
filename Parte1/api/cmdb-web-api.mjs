@@ -43,7 +43,7 @@ export async function deleteGroupInternal(req, rsp) {
 export async function updateGroupInternal(req, rsp) {
     const groupId = req.params.groupId
     const group = await groupServices.updateGroup(req.token,groupId,req.body)
-    rsp.status(201)
+    rsp.status(200)
     return {
         status: `Task with id ${groupId}updated with success`,
         group: group
@@ -53,8 +53,10 @@ export async function updateGroupInternal(req, rsp) {
 export async function addMovieToGroupInternal(req, rsp) {
     const groupId = req.params.groupId
     const movieId = req.body.id
-    const movie =  await  groupServices.addMovieToGroup(req.token,groupId,movieId)
-    rsp.status(201)
+    const movieTitle = req.body.title
+    const movieDuration = req.body.runtimeMins
+    const movie =  await groupServices.addMovieToGroup(req.token,groupId,movieId,movieTitle,movieDuration)
+    rsp.status(200)
     return {
         status: `Movie with ${movieId} added to group ${groupId}`,
         movie : movie
@@ -63,9 +65,9 @@ export async function addMovieToGroupInternal(req, rsp) {
 
 export async function removeMovieFromGroupInternal(req, rsp) {
     const groupId = req.params.groupId
-    const movieId = req.body.id
+    const movieId = req.params.movieId
     const movie =  await groupServices.removeMovieFromGroup(req.token,groupId,movieId)
-    rsp.status(201)
+    rsp.status(200)
     return {
         status: `Movie with ${movieId} removed from group ${groupId}`,
         movie : movie
@@ -90,6 +92,7 @@ function handleRequest(handler) {
         try {
             let body = await handler(req, rsp)
             rsp.json(body)
+            console.log(body)
         } catch (e) {
             const response = toHttpResponse(e)
             rsp.status(response.status).json({error:response.body})

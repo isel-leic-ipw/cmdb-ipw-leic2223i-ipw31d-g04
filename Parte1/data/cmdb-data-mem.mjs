@@ -1,6 +1,5 @@
 import {MAX_LIMIT} from "../services/services-constants.mjs";
 
-let nextId= 1
 
 const NUM_GROUPS = 3
 
@@ -13,7 +12,7 @@ let groups = new Array(NUM_GROUPS).fill(0, 0, NUM_GROUPS)
             description: `Group ${idx} description`,
             movies:[],
             totalDuration:0,
-            userId: idx%2
+            userId: 0
         }
     })
 
@@ -25,13 +24,18 @@ export async function getGroups(userId,q,skip,limit,){
     const retGroups = groups
         .filter(t => t.userId == userId)
         .filter(predicate)
-    const end = limit != MAX_LIMIT ? (skip + limit) : retGroups.length
+    const end = limit != MAX_LIMIT ? (skip + limit) : retGroups.length +1
     return groups.slice(skip,end)
 }
 
 export async function getGroupById(userId, groupId){//path
-    //return groups.find(group => group.id == groupId)
-    return findGroupAndDoSomething(userId,groupId,task => task)
+    return findGroupAndDoSomething(
+        userId,
+        groupId,
+        (group, groupId) => {
+            return group
+        }
+    )
 }
 
 export async function deleteGroup(userId, groupId){//path
@@ -39,7 +43,7 @@ export async function deleteGroup(userId, groupId){//path
         userId,
         groupId,
         (group,groupIdx) => {
-            group.splice(groupIdx,1)
+            groups.splice(groupIdx,1)
             return group
         }
     )
@@ -72,12 +76,17 @@ export async function updateGroup(userId, groupId,groupToUpdate){
         })
 }
 
-export async function addMovieToGroup (userId,groupId, movieId){
+export async function addMovieToGroup (userId,groupId, movie){
     return findGroupAndDoSomething(
         userId,
         groupId,
         group => {
-            group.movies.push(movieId)
+            const movieIdx = group.movies.findIndex(m => m.id == movie.id)
+            if (movieIdx == -1){
+                group.movies.push(movie)
+                group.totalDuration += parseInt(movie.duration)
+                return movie
+            }
         }
     )
 }
@@ -89,8 +98,8 @@ export async function removeMovieFromGroup(userId,groupId, movieId){
             const movieIdx = group.movies.findIndex(movie => movie.id == movieId)
             if (movieIdx != -1) {
                 group.movies.splice(movieIdx,1)
+                return group
             }
-            return group
         }
     )
 }

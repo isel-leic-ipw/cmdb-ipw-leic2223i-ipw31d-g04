@@ -5,14 +5,17 @@ import * as groupsData from '../data/cmdb-data-mem.mjs'
 import * as usersData from '../data/users-data.mjs'
 import errors from '../errors.mjs'
 import {MAX_LIMIT} from "./services-constants.mjs";
-import {removeMovieFromGroup} from "../api/cmdb-web-api.mjs";
 
 export async function  getGroups(userToken,q,skip=0,limit=MAX_LIMIT){//obtem os grupos todos, não precisa de parametros
     limit = Number(limit)
     skip = Number (skip)
-    if(isNaN(limit) || isNaN(skip)
-        || skip > MAX_LIMIT || limit > MAX_LIMIT || skip < 0 ||
-        skip > limit
+    if(    isNaN(limit)
+        || isNaN(skip)
+        || skip > MAX_LIMIT
+        || limit > MAX_LIMIT
+        || (skip+limit) > MAX_LIMIT
+        || skip < 0
+        || limit < 0
     ){
         throw  errors.INVALID_PARAMETER("skip or limit", `Skip and limit must be positive, less than ${MAX_LIMIT} and its sum must be less or equal to ${MAX_LIMIT}`)
     }
@@ -28,11 +31,11 @@ export async function getGroupsById(userToken, groupId){
     if(!user){
         throw errors.USER_NOT_FOUND()
     }
-    const group =  groupsData.getGroupById(user.id,groupId)
+    const group = await groupsData.getGroupById(user.id,groupId)
     if(group){
         return group
     }
-    throw errors.GROUP_NOT_FOUND(user.id, groupId)
+    throw errors.GROUP_NOT_FOUND(groupId)
 }
 export async function createGroup(userToken, groupToCreate){
     const user = await usersData.getUser(userToken)
@@ -71,23 +74,36 @@ export async function removeMovieFromGroup(userToken, groupId, movieId){
     if(!user){
         throw errors.USER_NOT_FOUND()
     }
-    const group =  groupsData.getGroupById(user.id,groupId)
+    const group = await groupsData.getGroupById(user.id,groupId)
     if(!group){
-        throw errors.GROUP_NOT_FOUND(user.id, groupId)
+        throw errors.GROUP_NOT_FOUND( groupId)
     }
-    return groupsData.removeMovieFromGroup(user.id, groupId,movieId)
+    const retMovie = await groupsData.removeMovieFromGroup(user.id, groupId,movieId)
+    if(!retMovie){
+        throw errors.MOVIE_NOT_FOUND(movieId)
+    }
+    return retMovie
 }
 
-export async function addMovieToGroup(userToken, groupId, movieId){
+export async function addMovieToGroup(userToken, groupId, movieId, title, duration){
     const user = await usersData.getUser(userToken)
     if(!user){
         throw errors.USER_NOT_FOUND()
     }
-    const group =  groupsData.getGroupById(user.id,groupId)
-    if(!group){
-        throw errors.GROUP_NOT_FOUND(user.id, groupId)
+    const movie = {
+        id : movieId,
+        title: title,
+        duration: duration
     }
-    return groupsData.addMovieToGroup(user.id, groupId,movieId)
+    const group = await groupsData.getGroupById(user.id,groupId)
+    if(!group){
+        throw errors.GROUP_NOT_FOUND(groupId)
+    }
+    const retMovie = await groupsData.addMovieToGroup(user.id, groupId,movie)
+    if (!retMovie){
+       throw errors.MOVIE_ALREADY_IN_GROUP(movie.id)
+    }
+    return retMovie
 }
 
 //Auxiliary Functions
