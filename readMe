@@ -1,0 +1,12 @@
+
+Get the list of the most popular movies. The request has an optional parameter to limit the number of returned movies (max 250)
+Search movies by name. The request has an optional parameter to limit the number of returned movies (max 250)
+Manage favorite movies groups
+    Create group providing its name and description - Done
+    Edit group by changing its name and description - Done
+    List all groups - Done
+    Delete a group - Done
+    Get the details of a group, with its name, description, the names and total duration of the included movies - Done
+    Add a movie to a group - Done
+    Remove a movie from a group - Done
+Create new user

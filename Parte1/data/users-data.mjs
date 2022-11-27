@@ -9,7 +9,7 @@ let users = new Array(NUM_USERS).fill(0, 0, NUM_USERS)
             token: "ef604e80-a351-4d13-b78f-c888f3e63b6" + idx
         }
     })
-
+let maxId = NUM_USERS
 
 
 export async function getUser(userToken) {
@@ -18,4 +18,7 @@ export async function getUser(userToken) {
 
 export async function createNewUser(){
 
+}
+function getNewId (){
+    return maxId++
 }
