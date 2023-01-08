@@ -27,12 +27,12 @@ export default function (groupServices) {
     async  function  getGroup (req, rsp) {
         const groupId = req.params.groupId
         const task = await groupServices.getGroupsById(req.token, groupId)
-        return {name: 'task', data :task}
+        return {name: 'group', data :task}
     }
 
     async function getGroups(req, rsp) {
         const tasks =  await groupServices.getGroups(req.token, req.query.q, req.query.skip, req.query.limit)
-        return {name: 'tasks', data : {title: 'All Tasks', tasks:tasks}}
+        return {name: 'groups', data : {title: 'All groups', tasks:tasks}}
     }
 
     function handleRequest(handler) {

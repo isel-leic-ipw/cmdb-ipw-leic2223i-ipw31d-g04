@@ -38,8 +38,8 @@ app.set('views', path.join(__dirname, 'web', 'site', 'views'));
 
 //SITE
 app.get('/home', webSite.getHome)
-app.get('/groups/',webApi.getGroups)
-app.get('/groups/:id', webSite.getGroup)
+app.get('/groups/',webSite.getGroups)
+app.get('/groups/:groupId', webSite.getGroup)
 app.get('/site.css', webSite.getCss)
 
 
