@@ -9,7 +9,7 @@ let users = new Array(NUM_USERS).fill(0, 0, NUM_USERS)
             name: `User ${idx}`,
             email: `User${idx}@slb.pt`,
             password: `12345`,
-            token: "ef604e80-a351-4d13-b78f-c888f3e63b6" + idx
+            token: "ef604e80-a351-4d13-b78f-c888f3e63b60"// + idx
         }
     })
 let maxId = NUM_USERS
