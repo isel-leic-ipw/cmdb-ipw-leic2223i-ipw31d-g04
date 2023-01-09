@@ -41,14 +41,13 @@ app.set('views', path.join(__dirname, 'web', 'site', 'views'));
 app.get('/home', webSite.getHome)
 
 app.post('/groups/:groupId/delete',webSite.deleteGroup)
-app.post('/groups/:groupId/uptade',webSite.updateGroup)
+app.post('/groups/:groupId',webSite.updateGroup)
 app.get('/groups/newGroup',webSite.getNewGroup)
+app.get('/groups/:groupId/uptadeGroup',webSite.getUptadeGroup)
 app.get('/groups/:groupId', webSite.getGroup)
 app.get('/groups',webSite.getGroups)
 app.post('/groups', webSite.createGroup)
 app.get('/site.css', webSite.getCss)
-
-
 
 // API
 app.get("/api/populars",webApi.searchPopular)
