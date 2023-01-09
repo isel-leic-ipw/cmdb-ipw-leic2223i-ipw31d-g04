@@ -1,8 +1,9 @@
 <h1>{{title}}</h1>
+Create a <a href="/groups/newGroup"> new group  </a>
 <ul>
     {{#each this.tasks}}
       <li>
-          <h2>{{name}}</h2>
+          <h2><a href="/groups/{{id}}"> {{name}} </a></h2>
           <p>{{description}}</p>
       </li>
     {{/each}}

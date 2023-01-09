@@ -28,6 +28,7 @@ app.use(cors())
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(express.json())   //se o body tiver em formato json na transforma o body json num objeto request
+app.use(express.urlencoded())
 
 // view engine setup
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -38,8 +39,13 @@ app.set('views', path.join(__dirname, 'web', 'site', 'views'));
 
 //SITE
 app.get('/home', webSite.getHome)
-app.get('/groups/',webSite.getGroups)
+
+app.post('/groups/:groupId/delete',webSite.deleteGroup)
+app.post('/groups/:groupId/uptade',webSite.updateGroup)
+app.get('/groups/newGroup',webSite.getNewGroup)
 app.get('/groups/:groupId', webSite.getGroup)
+app.get('/groups',webSite.getGroups)
+app.post('/groups', webSite.createGroup)
 app.get('/site.css', webSite.getCss)
 
 

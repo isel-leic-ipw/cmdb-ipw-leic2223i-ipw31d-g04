@@ -14,6 +14,11 @@ export default function (groupServices) {
         getCss: getCss,
         getGroup: handleRequest(getGroup),
         getGroups: handleRequest(getGroups),
+        createGroup: handleRequest(createGroup),
+        updateGroup: handleRequest(updateGroup),
+        deleteGroup: handleRequest(deleteGroup),
+        getNewGroup: getNewGroup,
+
     }
 
     async function getHome (req, rsp) {
@@ -35,6 +40,24 @@ export default function (groupServices) {
         return {name: 'groups', data : {title: 'All groups', tasks:tasks}}
     }
 
+    async function getNewGroup (req,rsp){
+        rsp.render('newGroup')
+    }
+
+    async function createGroup(req, rsp) {
+        console.log(req.body)
+        let newGroup = await groupServices.createGroup(req.token, req.body)
+        rsp.redirect('/groups')
+    }
+    async function deleteGroup(req, rsp) {
+        const groupId = req.params.groupId
+        const group = await groupServices.deleteGroup(req.token, groupId)
+        rsp.redirect('/groups')
+    }
+    async function updateGroup(req, rsp) {
+
+    }
+
     function handleRequest(handler) {
         // while we dont have authentication in site interface,
         // let's hardcode a token for one user '
@@ -44,8 +67,9 @@ export default function (groupServices) {
             req.token = HAMMER_TOKEN
             try {
                 let view = await handler(req, rsp)
-                rsp.render(view.name, view.data)
-
+                if(view) {
+                    rsp.render(view.name, view.data)
+                }
             } catch (e) {
                 // hammer time again, we are in an HTML response format
                 // returning errors in Json format
