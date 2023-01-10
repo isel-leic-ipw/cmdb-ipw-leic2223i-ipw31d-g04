@@ -1,12 +1,12 @@
 <h1>{{title}}</h1>
 Create a <a href="/groups/newGroup"> new group  </a>
-<ul>
+<ul style="list-style: none;">
     {{#each this.groups}}
       <li>
           <h2><a href="/groups/{{id}}"> {{name}} </a></h2>
           <p>{{description}}</p>
           <form action = "/groups/{{id}}/delete" method = "POST">
-              <input type="submit" value="Delete group">
+              <input type="submit" value="Delete">
           </form>
       </li>
     {{/each}}

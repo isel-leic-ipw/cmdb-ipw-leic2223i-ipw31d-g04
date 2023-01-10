@@ -6,7 +6,6 @@
 import  *as moviesData from '../data/cmdb-movies-data.mjs'
 import errors from '../errors.mjs'
 import {MAX_LIMIT} from "./services-constants.mjs";
-import {createNewUser} from "../data/users-data.mjs";
 
 
 export default function (groupsData, usersData, moviesData) {
@@ -26,27 +25,48 @@ export default function (groupsData, usersData, moviesData) {
         removeMovieFromGroup: removeMovieFromGroup,
         addMovieToGroup: addMovieToGroup,
         createUser:createUser,
-        searchPopular:searchPopular,
-        searchByTitle:searchByTitle
+        searchMovies:searchMovies,
+        searchByTitle:searchByTitle,
+        getMovieById:getMovieById
 
     }
+    async function getMovieById(movieId) {
+        if(!isAString(movieId)){
+            errors.INVALID_PARAMETER(movieId)
+        }
+        const movie = await moviesData.getMovieById(movieId)
+        return movie
+    }
 
-    async function searchPopular(limit) {
+
+    async function searchMovies(limit, title) {
+        limit = Number(limit)
+        if(limit === 0 ) limit = MAX_LIMIT
         if(isNaN(limit)){
             errors.INVALID_PARAMETER(limit)
         }
-        const movies = await moviesData.mostPopular(limit)
-        return movies
+        if(!isAString(title)) {
+            errors.INVALID_PARAMETER(title)
+        }
+        console.log("serv",limit)
+        console.log("serv",title)
+         if (title ){
+             const movies =  await moviesData.mostPopularByTitle(limit,title)
+             console.log(movies)
+            return movies
+        } else return  await moviesData.mostPopular(limit)
     }
 
-    async function searchByTitle(title, limit) {
+    // useless function on the website
+    async function searchByTitle(title, limit=MAX_LIMIT) {
+        limit = Number(limit)
         if(!isAString(title)){
             errors.INVALID_PARAMETER(limit)
         }
         if(isNaN(limit)){
             errors.INVALID_PARAMETER(limit)
         }
-        const movies = await moviesData.mostPopularByTitle(title,limit)
+        const movies = await moviesData.mostPopularByTitle(limit,title)
         return movies
     }
 

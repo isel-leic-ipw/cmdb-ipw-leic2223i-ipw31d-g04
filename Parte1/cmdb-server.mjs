@@ -39,20 +39,22 @@ app.set('views', path.join(__dirname, 'web', 'site', 'views'));
 
 //SITE
 app.get('/home', webSite.getHome)
-
+app.get("/populars",webSite.searchMovies)
 app.post('/groups/:groupId/delete',webSite.deleteGroup)
 app.post('/groups/:groupId',webSite.updateGroup)
 app.get('/groups/newGroup',webSite.getNewGroup)
+//app.get('/movies/:movieId',webSite.getMovieDeta)
 app.get('/groups/:groupId/uptadeGroup',webSite.getUptadeGroup)
 app.get('/groups/:groupId', webSite.getGroup)
 app.get('/groups',webSite.getGroups)
 app.post('/groups', webSite.createGroup)
 app.get('/site.css', webSite.getCss)
 
+
 // API
 app.get("/api/populars",webApi.searchPopular)
 app.get("/api/populars/:title", webApi.searchByTitle)
-app.post("/api/users",webApi.createNewUser)  // obter todos os grupos
+app.post("/api/users",webApi.createNewUser)  //
 app.get("/api/groups",webApi.getGroups)  // obter todos os grupos
 app.get("/api/groups/:groupId",webApi.getGroupsById) // obter um grupo
 app.delete("/api/groups/:groupId",webApi.deleteGroup) // obter um grupo

@@ -5,16 +5,14 @@ export async function mostPopular(limit){
     const rps = await fetch(`https://imdb-api.com/en/API/Top250Movies/${API_KEY}`)
     const movies = await rps.json()
     const myMovies = movies.items.slice(0,limit)
-    const ids = myMovies.map(m=> m.id)
-    return await getMovieById (ids)
-
+    return await myMovies
 }
-export async function mostPopularByTitle(title, limit){
+
+export async function mostPopularByTitle(limit,title){
     const rps = await fetch(`https://imdb-api.com/en/API/AdvancedSearch/${API_KEY}?title=${title}&count=${limit}&title_type=feature`)
     const movies = await rps.json()
-    const myMovies = movies.items.slice(0,limit)
-    const ids = myMovies.map(m=> m.id)
-    return await getMovieById (ids)
+    const myMovies = movies.results.slice(0,limit)
+    return await myMovies
 }
 
 async function  getMovieById (ids){
@@ -30,3 +28,4 @@ async function  getMovieById (ids){
     }
     return newObj
 }
+

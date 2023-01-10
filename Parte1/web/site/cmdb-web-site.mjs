@@ -18,16 +18,28 @@ export default function (groupServices) {
         createGroup: handleRequest(createGroup),
         updateGroup: handleRequest(updateGroup),
         deleteGroup: handleRequest(deleteGroup),
+        searchMovies:handleRequest(searchMovies),
         getNewGroup: getNewGroup,
         getUptadeGroup:getUptadeGroup,
     }
 
     async function getHome (req, rsp) {
-        sendFile('index.html', rsp)
+        rsp.render("home", {})
     }
 
     async  function  getCss (req, rsp) {
         sendFile('site.css', rsp)
+    }
+
+    async function getMovieDetails(req, rps){
+        const movieId = req.params.movieId
+        const movie  = await groupServices.getMovieById(movieId)
+        return {name: movie, data : movie}
+    }
+
+    async function searchMovies(req, rps) {
+        const movies = await groupServices.searchMovies(req.query.limit,req.query.title)
+        return  {name:'movies', data : {title: 'Result', movies:movies}}
     }
 
     async  function  getGroup (req, rsp) {
@@ -44,11 +56,10 @@ export default function (groupServices) {
     async function getNewGroup (req,rsp){
         rsp.render('newGroup')
     }
+
     async function getUptadeGroup (req,rsp){
         const group = await groupServices.getGroupsById(HAMMER_TOKEN,req.params.groupId)
-        console.log(group)
         rsp.render("uptadeGroup", {name: group.name, description: group.description, id : req.params.groupId} )
-        console.log("id", req.params.groupId)
     }
 
     async function createGroup(req, rsp) {
@@ -67,6 +78,7 @@ export default function (groupServices) {
         const group = await groupServices.updateGroup(req.token, groupId, req.body)
         rsp.redirect(`/groups/${groupId}`)
     }
+
 
     function handleRequest(handler) {
         // while we dont have authentication in site interface,
