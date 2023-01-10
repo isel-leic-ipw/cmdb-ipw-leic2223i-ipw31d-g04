@@ -27,10 +27,10 @@ export default function (groupsData, usersData, moviesData) {
         createUser:createUser,
         searchMovies:searchMovies,
         searchByTitle:searchByTitle,
-        getMovieById:getMovieById
+        getMovieDetails:getMovieDetails
 
     }
-    async function getMovieById(movieId) {
+    async function getMovieDetails(movieId) {
         if(!isAString(movieId)){
             errors.INVALID_PARAMETER(movieId)
         }
@@ -48,8 +48,6 @@ export default function (groupsData, usersData, moviesData) {
         if(!isAString(title)) {
             errors.INVALID_PARAMETER(title)
         }
-        console.log("serv",limit)
-        console.log("serv",title)
          if (title ){
              const movies =  await moviesData.mostPopularByTitle(limit,title)
              console.log(movies)

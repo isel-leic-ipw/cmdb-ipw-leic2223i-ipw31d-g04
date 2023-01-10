@@ -20,7 +20,7 @@ let maxId = NUM_GROUPS
 
 
 export async function getGroups(userId,q,skip,limit,){
-    const predicate = q ? t => t.title.includes(q) : t => true
+    const predicate = q ? group => group.name.includes(q) : t => true
     const retGroups = groups
         .filter(t => t.userId == userId)
         .filter(predicate)

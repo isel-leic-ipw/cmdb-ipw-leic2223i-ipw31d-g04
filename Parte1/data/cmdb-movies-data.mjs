@@ -1,5 +1,6 @@
 import  fetch  from 'node-fetch'
-const API_KEY = 'k_o4zms241'
+//const API_KEY = 'k_o4zms241'
+const API_KEY = 'k_h738jg8b'
 
 export async function mostPopular(limit){
     const rps = await fetch(`https://imdb-api.com/en/API/Top250Movies/${API_KEY}`)
@@ -15,17 +16,19 @@ export async function mostPopularByTitle(limit,title){
     return await myMovies
 }
 
-async function  getMovieById (ids){
-    let newObj = {
-        "total-duration": 0,
-        "movies": []
+export async function getMovieById (id){
+    const rps =  await fetch(`https://imdb-api.com/en/API/Title/${API_KEY}/${id}`)
+    const movie = await rps.json()
+    const myMovie =  {
+       "id": movie.id,
+        "title": movie.title,
+        "description": movie.plot,
+        "image": movie.image,
+        "runtimeMins": movie.runtimeMins,
+        "directors": movie.directors,
+        "actors": movie.actorList.map(actor => actor.name)
     }
-    for(const id of ids){
-        let response = await fetch(`https://imdb-api.com/en/API/Title/${API_KEY}/${id}`)
-        let movie = await response.json()
-        newObj['total-duration'] += parseInt(movie.runtimeMins)
-        newObj.movies.push({"id" : movie.id, "tittle" : movie.title, "duration" : movie.runtimeMins})
-    }
-    return newObj
+    console.log("myMovie", myMovie)
+    return myMovie
 }
 

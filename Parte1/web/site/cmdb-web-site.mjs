@@ -19,12 +19,13 @@ export default function (groupServices) {
         updateGroup: handleRequest(updateGroup),
         deleteGroup: handleRequest(deleteGroup),
         searchMovies:handleRequest(searchMovies),
+        getMovieDetails:handleRequest(getMovieDetails),
         getNewGroup: getNewGroup,
         getUptadeGroup:getUptadeGroup,
     }
 
     async function getHome (req, rsp) {
-        rsp.render("home", {})
+        rsp.render("home", {title: "Home Page"})
     }
 
     async  function  getCss (req, rsp) {
@@ -33,8 +34,8 @@ export default function (groupServices) {
 
     async function getMovieDetails(req, rps){
         const movieId = req.params.movieId
-        const movie  = await groupServices.getMovieById(movieId)
-        return {name: movie, data : movie}
+        const movie = await groupServices.getMovieDetails(movieId)
+        return {name: "movie", data : {title: 'Movie Details', movie: movie}}
     }
 
     async function searchMovies(req, rps) {
@@ -63,7 +64,6 @@ export default function (groupServices) {
     }
 
     async function createGroup(req, rsp) {
-        console.log(req.body)
         let newGroup = await groupServices.createGroup(req.token, req.body)
         rsp.redirect('/groups')
     }
@@ -74,7 +74,6 @@ export default function (groupServices) {
     }
     async function updateGroup(req, rsp) {
         const groupId = req.params.groupId
-        console.log(req.body)
         const group = await groupServices.updateGroup(req.token, groupId, req.body)
         rsp.redirect(`/groups/${groupId}`)
     }

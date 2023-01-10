@@ -1,5 +1,19 @@
 <h1>{{title}}</h1>
-Create a <a href="/groups/newGroup"> new group  </a>
+
+<form action="/populars" method="GET">
+    <div >
+    <label for="limit">Limit:</label>
+    <input type="number" id="limit" name="limit">
+    <label for="skip">Skip:</label>
+    <input type="number" id="skip" name="skip">
+    <label for="name">Group Name:</label>
+    <input type="text" id="name" name="name">
+    <input type="submit" value="Search">
+    </div>
+</form>
+<h2>
+Create a <a href="/groups/newGroup"> new group  </a>.
+</h2>
 <ul style="list-style: none;">
     {{#each this.groups}}
       <li>
