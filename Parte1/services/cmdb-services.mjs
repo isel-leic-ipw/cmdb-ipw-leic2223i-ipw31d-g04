@@ -68,22 +68,31 @@ export default function (groupsData, usersData, moviesData) {
         return movies
     }
 
-    async function getGroups(userToken, q, skip = 0, limit = MAX_LIMIT) {//obtem os grupos todos, não precisa de parametros
+    async function getGroups(userToken, q, skip = 0, limit ) {//obtem os grupos todos, não precisa de parametros
+
+
         limit = Number(limit)
         skip = Number(skip)
-        if (isNaN(limit)
-            || isNaN(skip)
-            || skip > MAX_LIMIT
-            || limit > MAX_LIMIT
-            || (skip + limit) > MAX_LIMIT
-            || skip < 0
-            || limit < 0
-        ) {
-            throw  errors.INVALID_PARAMETER("skip or limit", `Skip and limit must be positive, less than ${MAX_LIMIT} and its sum must be less or equal to ${MAX_LIMIT}`)
+        if(limit==0){
+            limit = MAX_LIMIT
         }
         const user = await usersData.getUser(userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
+        }
+        if(!q && !skip && !limit){
+            limit = MAX_LIMIT
+            return groupsData.getGroups(user.id, q, skip, limit)
+        }
+        if (isNaN(limit)
+            || isNaN(skip)
+            || skip > MAX_LIMIT
+            || limit > MAX_LIMIT
+           // || (skip + limit) > MAX_LIMIT
+            || skip < 0
+            || limit < 0
+        ) {
+            throw  errors.INVALID_PARAMETER("skip or limit", `Skip and limit must be positive, less than ${MAX_LIMIT} and its sum must be less or equal to ${MAX_LIMIT}`)
         }
         return groupsData.getGroups(user.id, q, skip, limit)     //validar se existe grupos. N é necessário pois se n há grupos, n imprime nada*/
 

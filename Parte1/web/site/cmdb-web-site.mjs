@@ -51,7 +51,8 @@ export default function (groupServices) {
 
     async function getGroups(req, rsp) {
         const groups =  await groupServices.getGroups(req.token, req.query.q, req.query.skip, req.query.limit)
-        return {name: 'groups', data : {title: 'All groups', groups:groups}}
+        const title = 'All groups'
+        return {name: 'groups', data : {title: 'Groups', groups:groups}}
     }
 
     async function getNewGroup (req,rsp){

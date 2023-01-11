@@ -20,12 +20,16 @@ let maxId = NUM_GROUPS
 
 
 export async function getGroups(userId,q,skip,limit,){
-    const predicate = q ? group => group.name.includes(q) : t => true
+    console.log("q", q)
+    console.log("skip", skip)
+    console.log("limit", limit)
+    if (q) q = q.toUpperCase()
+    const predicate = q ? g => g.name.toUpperCase().includes(q) : g => true
     const retGroups = groups
-        .filter(t => t.userId == userId)
+        .filter(g => g.userId == userId)
         .filter(predicate)
-    const end = limit != MAX_LIMIT ? (skip + limit) : retGroups.length +1
-    return groups.slice(skip,end)
+    const end = limit != Infinity ? (skip + limit) : retGroups.length
+    return retGroups.slice(skip,end)
 }
 
 export async function getGroupById(userId, groupId){//path
