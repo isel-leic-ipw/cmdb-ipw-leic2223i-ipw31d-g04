@@ -20,6 +20,9 @@ export default function (groupServices) {
         deleteGroup: handleRequest(deleteGroup),
         searchMovies:handleRequest(searchMovies),
         getMovieDetails:handleRequest(getMovieDetails),
+        addMovieToGroup:handleRequest(addMovieToGroup),
+        removeMovieFromGroup:handleRequest(removeMovieFromGroup),
+        addMovieToGroupView:handleRequest(addMovieToGroupView),
         getNewGroup: getNewGroup,
         getUptadeGroup:getUptadeGroup,
     }
@@ -40,12 +43,13 @@ export default function (groupServices) {
 
     async function searchMovies(req, rps) {
         const movies = await groupServices.searchMovies(req.query.limit,req.query.title)
-        return  {name:'movies', data : {title: 'Result', movies:movies}}
+        return  {name:'movies', data : {title: 'Movies', movies:movies}}
     }
 
     async  function  getGroup (req, rsp) {
         const groupId = req.params.groupId
         const group = await groupServices.getGroupsById(req.token, groupId)
+        console.log("movies",group.movies)
         return {name: 'group', data :group}
     }
 
@@ -76,6 +80,36 @@ export default function (groupServices) {
     async function updateGroup(req, rsp) {
         const groupId = req.params.groupId
         const group = await groupServices.updateGroup(req.token, groupId, req.body)
+        rsp.redirect(`/groups/${groupId}`)
+    }
+
+    async function addMovieToGroupView(req, rsp){
+        const movieId = req.params.movieId
+        console.log("movieId",movieId)
+        let groups =  await groupServices.getGroups(req.token, req.query.q, req.query.skip, req.query.limit)
+        groups = {
+            groups:groups,
+            movieId:movieId
+        }
+        return {name: 'addMovie', data :{groups:groups}}
+    }
+
+    async function addMovieToGroup(req, rsp) {
+        const groupId = req.params.groupId
+        const movieId = req.params.movieId
+        console.log("site" , movieId)
+        const movie = await groupServices.getMovieDetails(movieId)
+        console.log("site" , movie)
+        const addMovie = await groupServices.addMovieToGroup(req.token, groupId, movieId, movie.title, movie.runtimeMins,movie.image)
+        console.log("site" , addMovie)
+        rsp.redirect(`/groups/${groupId}`)
+    }
+
+
+    async function removeMovieFromGroup(req, rsp) {
+        const groupId = req.params.groupId
+        const movieId = req.params.movieId
+        const movie = await groupServices.removeMovieFromGroup(req.token, groupId, movieId)
         rsp.redirect(`/groups/${groupId}`)
     }
 

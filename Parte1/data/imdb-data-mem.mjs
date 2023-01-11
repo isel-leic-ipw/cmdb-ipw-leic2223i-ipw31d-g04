@@ -20,9 +20,6 @@ let maxId = NUM_GROUPS
 
 
 export async function getGroups(userId,q,skip,limit,){
-    console.log("q", q)
-    console.log("skip", skip)
-    console.log("limit", limit)
     if (q) q = q.toUpperCase()
     const predicate = q ? g => g.name.toUpperCase().includes(q) : g => true
     const retGroups = groups
@@ -81,6 +78,7 @@ export async function updateGroup(userId, groupId,groupToUpdate){
 }
 
 export async function addMovieToGroup (userId,groupId, movie){
+    console.log("data-mem Movies", movie)
     return findGroupAndDoSomething(
         userId,
         groupId,

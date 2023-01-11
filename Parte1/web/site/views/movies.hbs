@@ -2,9 +2,12 @@
 <ul style="list-style: none;">
     {{#each this.movies}}
       <li>
-          <div>
+          <div class="dt-column">
               <p style=""> {{this.title}} </p>
               <a href="/movies/{{this.id}}"> <img src = {{this.image}} style="width:128px;height:176px;" ></a>
+              <form action = "/groups/movies/{{this.id}}" method = "GET">
+                  <input type="submit" value="Add">
+              </form>
           </div>
       </li>
     {{/each}}

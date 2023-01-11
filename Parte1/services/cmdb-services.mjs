@@ -50,7 +50,6 @@ export default function (groupsData, usersData, moviesData) {
         }
          if (title ){
              const movies =  await moviesData.mostPopularByTitle(limit,title)
-             console.log(movies)
             return movies
         } else return  await moviesData.mostPopular(limit)
     }
@@ -174,7 +173,7 @@ export default function (groupsData, usersData, moviesData) {
         return retMovie
     }
 
-    async function addMovieToGroup(userToken, groupId, movieId, title, duration) {
+    async function addMovieToGroup(userToken, groupId, movieId, title, duration,imgage) {
         const user = await usersData.getUser(userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
@@ -182,7 +181,8 @@ export default function (groupsData, usersData, moviesData) {
         const movie = {
             id: movieId,
             title: title,
-            duration: duration
+            duration: duration,
+            image: imgage
         }
         const group = await groupsData.getGroupById(user.id, groupId)
         if (!group) {

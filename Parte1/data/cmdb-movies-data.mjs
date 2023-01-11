@@ -28,7 +28,6 @@ export async function getMovieById (id){
         "directors": movie.directors,
         "actors": movie.actorList.map(actor => actor.name)
     }
-    console.log("myMovie", myMovie)
     return myMovie
 }
 

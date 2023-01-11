@@ -49,6 +49,9 @@ app.get('/groups/:groupId', webSite.getGroup)
 app.get('/groups',webSite.getGroups)
 app.post('/groups', webSite.createGroup)
 app.get('/site.css', webSite.getCss)
+app.get("/groups/movies/:movieId",webSite.addMovieToGroupView)
+app.post("/groups/:groupId/movies/:movieId/put",webSite.addMovieToGroup)
+app.post("/groups/:groupId/movies/:movieId/delete",webSite.removeMovieFromGroup)
 
 
 // API
