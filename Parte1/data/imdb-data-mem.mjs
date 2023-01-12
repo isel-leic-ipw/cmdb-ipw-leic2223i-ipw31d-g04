@@ -78,7 +78,7 @@ export async function updateGroup(userId, groupId,groupToUpdate){
 }
 
 export async function addMovieToGroup (userId,groupId, movie){
-    console.log("data-mem Movies", movie)
+
     return findGroupAndDoSomething(
         userId,
         groupId,
