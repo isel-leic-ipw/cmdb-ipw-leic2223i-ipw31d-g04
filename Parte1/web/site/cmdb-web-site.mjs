@@ -49,13 +49,11 @@ export default function (groupServices) {
     async  function  getGroup (req, rsp) {
         const groupId = req.params.groupId
         const group = await groupServices.getGroupsById(req.token, groupId)
-        console.log("movies",group.movies)
         return {name: 'group', data :group}
     }
 
     async function getGroups(req, rsp) {
         const groups =  await groupServices.getGroups(req.token, req.query.q, req.query.skip, req.query.limit)
-        const title = 'All groups'
         return {name: 'groups', data : {title: 'Groups', groups:groups}}
     }
 
@@ -99,9 +97,7 @@ export default function (groupServices) {
         const movieId = req.params.movieId
         console.log("site" , movieId)
         const movie = await groupServices.getMovieDetails(movieId)
-        console.log("site" , movie)
         const addMovie = await groupServices.addMovieToGroup(req.token, groupId, movieId, movie.title, movie.runtimeMins,movie.image)
-        console.log("site" , addMovie)
         rsp.redirect(`/groups/${groupId}`)
     }
 

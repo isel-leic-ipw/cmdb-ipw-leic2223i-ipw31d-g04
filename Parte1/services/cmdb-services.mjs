@@ -93,8 +93,8 @@ export default function (groupsData, usersData, moviesData) {
         ) {
             throw  errors.INVALID_PARAMETER("skip or limit", `Skip and limit must be positive, less than ${MAX_LIMIT} and its sum must be less or equal to ${MAX_LIMIT}`)
         }
-        return groupsData.getGroups(user.id, q, skip, limit)     //validar se existe grupos. N é necessário pois se n há grupos, n imprime nada*/
-
+       // return groupsData.getGroups(user.id, q, skip, limit)     //validar se existe grupos. N é necessário pois se n há grupos, n imprime nada*/
+        return groupsData.getGroups(user.id, q, skip, limit)
     }
 
     async function getGroupsById(userToken, groupId) {
@@ -138,7 +138,7 @@ export default function (groupsData, usersData, moviesData) {
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
-        const group = await groupsData.deleteGroup(user.id, groupId)
+        const group = await groupsData.deleteGroup( groupId, user.id,)
         if (!group) {
             throw errors.GROUP_NOT_FOUND(groupId)
         }
@@ -178,6 +178,7 @@ export default function (groupsData, usersData, moviesData) {
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
+        console.log("addMovieToGroup", movieId)
         const movie = {
             id: movieId,
             title: title,

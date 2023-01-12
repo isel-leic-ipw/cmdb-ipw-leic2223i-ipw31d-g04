@@ -39,7 +39,7 @@ export async function getGroupById(userId, groupId){//path
     )
 }
 
-export async function deleteGroup(userId, groupId){//path
+export async function deleteGroup(groupId, userId ){//path
     return findGroupAndDoSomething(
         userId,
         groupId,
@@ -100,6 +100,8 @@ export async function removeMovieFromGroup(userId, groupId, movieId) {
         (group, groupIdx) => {
             const movieIdx = group.movies.findIndex(movie => movie.id == movieId)
             if (movieIdx != -1) {
+                console.log(group.movies[movieIdx])
+                group.totalDuration = group.totalDuration - group.movies[movieIdx].duration
                 group.movies.splice(movieIdx, 1)
                 return group
             }

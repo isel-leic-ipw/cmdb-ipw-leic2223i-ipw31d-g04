@@ -7,14 +7,19 @@ import yaml from 'yamljs'
 import hbs from 'hbs'
 import url from "url";
 import * as path from "path";
+import cookieParser from 'cookie-parser'
 
-import * as groupData from './data/imdb-data-mem.mjs'
+import * as groupDataMem from './data/imdb-data-mem.mjs'
 import * as usersData from './data/users-data.mjs'
+
+import * as groupDataElastic from './data/imdb-data-elastic.mjs'
 import * as moviesData from './data/cmdb-movies-data.mjs'
 import groupsServicesInit from './services/cmdb-services.mjs'
 import apiInit from './web/api/cmdb-web-api.mjs'
 import siteInit from './web/site/cmdb-web-site.mjs'
 
+const chooseData = false // if true data mem else data elastic
+const groupData = chooseData ? groupDataMem : groupDataElastic
 
 const swaggerDocument = yaml.load('./docs/tasks-api.yaml')
 const PORT = 1904
@@ -25,10 +30,11 @@ const webSite = siteInit(groupsServices)
 
 let app = express()
 app.use(cors())
-app.use(express.json())
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(express.json())   //se o body tiver em formato json na transforma o body json num objeto request
 app.use(express.urlencoded())
+app.use(cookieParser())
 
 // view engine setup
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));

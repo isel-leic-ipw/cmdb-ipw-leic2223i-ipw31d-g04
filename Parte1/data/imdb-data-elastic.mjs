@@ -1,136 +1,139 @@
-import fetch from 'node-fetch'
 
-const baseURL = "http://localhost:9200/"
-
-const NUM_GROUPS = 3
-
-// este código é para ajudar a realizar testes
-let groups = new Array(NUM_GROUPS).fill(0, 0, NUM_GROUPS)
-    .map((_, idx) => {
-        return {
-            id: idx,
-            name: `Group ${idx}`,
-            description: `Group ${idx} description`,
-            movies:[],
-            totalDuration:0,
-            userId: 0
-        }
-    })
-
-let maxId = NUM_GROUPS
+import { get, post, del, put } from './fetch-wrapper.mjs'
+import uriManager from './uri-manager.mjs'
+const URI_MANAGER = uriManager()
 
 
-export async function getGroups(userId,q,skip,limit,){
-    if (q) q = q.toUpperCase()
-    const predicate = q ? g => g.name.toUpperCase().includes(q) : g => true
-    const retGroups = groups
-        .filter(g => g.userId == userId)
-        .filter(predicate)
-    const end = limit != Infinity ? (skip + limit) : retGroups.length
-    return retGroups.slice(skip,end)
-}
-//------------------------------
+export async function getGroups(userId, q, skip, limit) {
+    const query = {
+        query: {
+            match: {
+                userId: userId,
+            },
+        },
+    }
+    return post(URI_MANAGER.getAll('groups'), query).then((body) => body.hits.hits.map(createGroupFromElastic)).then(filterGroups)
 
-export async function getGroupById(userId, groupId){//path
-    return findGroupAndDoSomething(
-        userId,
-        groupId,
-        (group, groupId) => {
-            return group
-        }
-    )
+    function filterGroups (groups){
+        if (q) q = q.toUpperCase()
+        const predicate = q ? g => g.name.toUpperCase().includes(q) : g => true
+        const retGroups = groups
+            .filter(g => g.userId == userId)
+            .filter(predicate)
+        const end = limit != Infinity ? (skip + limit) : retGroups.length
+        return retGroups.slice(skip,end)
+    }
 }
 
-export async function deleteGroup(userId, groupId){//path
-    return findGroupAndDoSomething(
-        userId,
-        groupId,
-        (group,groupIdx) => {
-            groups.splice(groupIdx,1)
-            return group
-        }
-    )
+export async function getGroupById(userId, id) {
+    const group = get(URI_MANAGER.get('groups', id))
+        .then(createGroupFromElastic)
+    return group
 }
 
-export async function createGroup(userId,groupToCreate){
-    let newGroup = {     //x = grupo
-        id:getNewId(),
-        name:groupToCreate.name,
+
+export async function createGroup(userId, groupToCreate) {
+    const newGroup = {
+        name: groupToCreate.name,
         description:groupToCreate.description,
         movies:[],
         totalDuration:0,
         userId: userId
     }
-    groups.push(newGroup)
-    return newGroup  //resolver a promessa de criar o grupo
+    return post(URI_MANAGER.create('groups'), newGroup)
 }
 
-//usa o body e o path,este parametro esta mal, mas preciso dele tambem nao cm parametro
-// a validação tem que ser feita noutro modulo, acho que da para otimizar o do prof
-
-export async function updateGroup(userId, groupId,groupToUpdate){
-    return findGroupAndDoSomething(
-        userId,
-        groupId,
-        (group, groupIdx) => {
-            group.name = groupToUpdate.name
-            group.description = groupToUpdate.description
-            return group
-        })
+export async function newGroupUpdated(userId, groupId, group) {
+    const newGroup = Object.assign(group)
+    return put(URI_MANAGER.update('groups', groupId), newGroup)
 }
 
-export async function addMovieToGroup (userId,groupId, movie){
+export async function deleteGroup(id) {
+    return del(URI_MANAGER.delete('groups', id)).then((body) => body.id)
+}
 
-    return findGroupAndDoSomething(
-        userId,
-        groupId,
-        (group,groupIdx) => {
-            const movieIdx = group.movies.findIndex(m => m.id == movie.id)
-            if (movieIdx == -1){
-                group.movies.push(movie)
-                group.totalDuration += parseInt(movie.duration)
-                return movie
-            }
-        }
-    )
+export function createGroupFromElastic(GroupElastic) {
+    let group = GroupElastic._source
+    group.id = GroupElastic._id
+    return group
+}
+
+export async function addMovieToGroup (userId, groupId, movie) {
+    const newMovie= Object.assign(movie)
+    const group = await getGroupById(userId, groupId)
+
+
+    if (group.id == groupId) {
+        group.movies.push(newMovie)
+    }
+    const newDuration = group.totalDuration + parseInt(movie.duration)
+    const newGroup = {
+        name: group.name,
+        description: group.description,
+        movies: group.movies,
+        totalDuration: newDuration,
+        userId: group.userId,
+    }
+    return await newGroupUpdated(userId, groupId, newGroup)
+}
+export async function uptadeGroup(userId, groupId, groupToUpdate) {
+    let newName;
+    let newDescription;
+
+    const group = await getGroupById(userId, groupId)
+
+    if(!groupToUpdate.name) newName = group.name
+    else newName = groupToUpdate.name
+    if(!groupToUpdate.description) newDescription = group.description
+    else newDescription = groupToUpdate.description
+
+    const newGroup = {
+        name: newName,
+        description: newDescription,
+    }
+    return await newGroupUpdated(userId, groupId, newGroup)
 }
 
 export async function removeMovieFromGroup(userId, groupId, movieId) {
-    return findGroupAndDoSomething(
-        userId,
-        groupId,
-        (group, groupIdx) => {
-            const movieIdx = group.movies.findIndex(movie => movie.id == movieId)
-            if (movieIdx != -1) {
-                group.movies.splice(movieIdx, 1)
-                return group
-            }
+    const group = await getGroupById(userId, groupId)
+    console.log('groupDELETE', group)
+
+    if (group.id == groupId) {
+        const movieIdx = group.movies.findIndex(movie => movie.id == movieId)
+
+        if (movieIdx != -1) {
+            console.log(group.movies[movieIdx])
+            group.totalDuration = group.totalDuration - group.movies[movieIdx].duration
+            group.movies.splice(movieIdx, 1)
         }
-    )
+    }
+    const newGroup = group
+
+    console.log('groupDELETE', newGroup)
+    return await newGroupUpdated(userId, groupId, newGroup)
 }
 
-// Auxiliary functions
-function findGroupAndDoSomething(userId, groupId, action) {
-    const groupIdx = groups.findIndex(group => group.id == groupId && group.userId == userId)
-    const group = groups[groupIdx]
-    if(groupIdx != -1) {
-        return action(group, groupIdx)
-    }
-}
-function getNewId() {
-    return maxId++
-}
 
 /*
-export function updateGroup(groupId,groupToUpdate){
-    const updateGroup= groups.find(group => group.id == groupId)
-    if(updateGroup != undefined) {
+export async function getGroups(userId,q,skip,limit){
+    return fetch(baseURL + '/groups/_search/' , {accept: "application/json"}
+        .then(response =>response.json())
+        .then(body => body.hits.hits.map(createGroupFromElastic))
+        .then(groups => filterGroups(groups)))
 
-        const groupIdx = groups.findIndex(group => group.id == groupId)
-        updateGroup.name = groupToUpdate.name
-        updateGroup.description = groupToUpdate.description
-        groups.splice(groupIdx,1,updateGroup)
-        return updateGroup
+    function filterGroups (groups){
+        if (q) q = q.toUpperCase()
+        const predicate = q ? g => g.name.toUpperCase().includes(q) : g => true
+        const retGroups = groups
+            .filter(g => g.userId == userId)
+            .filter(predicate)
+        const end = limit != Infinity ? (skip + limit) : retGroups.length
+        return retGroups.slice(skip,end)
+    }
+    function createGroupFromElastic(groupElastic){
+        let group = groupElastic._source
+        group.id = groupElastic._id
+        return group
     }
 }
-*/
+ */
