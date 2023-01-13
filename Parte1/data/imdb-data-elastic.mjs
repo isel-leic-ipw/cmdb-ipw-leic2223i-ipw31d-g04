@@ -76,20 +76,17 @@ export async function addMovieToGroup (userId, groupId, movie) {
     }
     return await newGroupUpdated(userId, groupId, newGroup)
 }
-export async function uptadeGroup(userId, groupId, groupToUpdate) {
-    let newName;
-    let newDescription;
+
+export async function updateGroup(userId, groupId, groupToUpdate) {
 
     const group = await getGroupById(userId, groupId)
 
-    if(!groupToUpdate.name) newName = group.name
-    else newName = groupToUpdate.name
-    if(!groupToUpdate.description) newDescription = group.description
-    else newDescription = groupToUpdate.description
-
     const newGroup = {
-        name: newName,
-        description: newDescription,
+        name: groupToUpdate.name,
+        description: groupToUpdate.description,
+        movies: group.movies,
+        totalDuration: group.totalDuration,
+        userId: group.userId
     }
     return await newGroupUpdated(userId, groupId, newGroup)
 }

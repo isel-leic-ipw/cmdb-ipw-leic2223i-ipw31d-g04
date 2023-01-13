@@ -79,6 +79,7 @@ export default function (groupsData, usersData, moviesData) {
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
+
         if(!q && !skip && !limit){
             limit = MAX_LIMIT
             return groupsData.getGroups(user.id, q, skip, limit)
@@ -109,14 +110,14 @@ export default function (groupsData, usersData, moviesData) {
         throw errors.GROUP_NOT_FOUND(groupId)
     }
 
-    async function createUser(userName, userEmail, password) {
+    async function createUser(userName, password) {
         if (!isAString(userName))
             throw errors.INVALID_PARAMETER(userName)
-        if (!isAString(userEmail))
-            throw errors.INVALID_PARAMETER(userEmail)
+        //if (!isAString(userEmail))
+           // throw errors.INVALID_PARAMETER(userEmail)
         if (!isAString(userEmail))
             throw errors.INVALID_PARAMETER(password)
-        const user = await usersData.createNewUser(userName, userEmail, password)
+        const user = await usersData.createNewUser(userName, password)
 
         return user
     }

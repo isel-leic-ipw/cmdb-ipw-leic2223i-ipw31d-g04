@@ -9,22 +9,25 @@ import url from "url";
 import * as path from "path";
 import cookieParser from 'cookie-parser'
 
-import * as groupDataMem from './data/imdb-data-mem.mjs'
-import * as usersData from './data/users-data.mjs'
+import * as groupsDataMem from './data/imdb-data-mem.mjs'
+import * as usersDataMem from './data/users-data.mjs'
 
 import * as groupDataElastic from './data/imdb-data-elastic.mjs'
+import * as usersDataElastic from './data/users-data-elastic.mjs'
 import * as moviesData from './data/cmdb-movies-data.mjs'
 import groupsServicesInit from './services/cmdb-services.mjs'
 import apiInit from './web/api/cmdb-web-api.mjs'
 import siteInit from './web/site/cmdb-web-site.mjs'
 
-const chooseData = false // if true data mem else data elastic
-const groupData = chooseData ? groupDataMem : groupDataElastic
+const elasticGroup = true // if true data mem else data elastic
+const elasticUsers = true
+const groupsData = elasticGroup ? groupDataElastic : groupsDataMem
+const usersData = elasticUsers ? usersDataElastic : usersDataMem
 
 const swaggerDocument = yaml.load('./docs/tasks-api.yaml')
 const PORT = 1904
 
-const groupsServices = groupsServicesInit (groupData,usersData,moviesData)
+const groupsServices = groupsServicesInit (groupsData,usersData,moviesData)
 const webApi = apiInit (groupsServices)
 const webSite = siteInit(groupsServices)
 
