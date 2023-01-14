@@ -35,16 +35,16 @@ export default function (groupServices) {
     }
 
     async function getGroupsInternal(req, rsp) {
-        return await groupServices.getGroups(req.token, req.query.q, req.query.skip, req.query.limit)
+        return await groupServices.getGroups(req.user.token, req.query.q, req.query.skip, req.query.limit)
     }
 
     async function getGroupsByIdInternal(req, rsp) {
         const groupId = req.params.groupId
-        return groupServices.getGroupsById(req.token, groupId)
+        return groupServices.getGroupsById(req.user.token, groupId)
     }
 
     async function createGroupInternal(req, rsp) {
-        let newGroup = await groupServices.createGroup(req.token, req.body)
+        let newGroup = await groupServices.createGroup(req.user.token, req.body)
         rsp.status(201)
         return {
             status: `Task with id ${newGroup.id} created with success`,
@@ -54,7 +54,7 @@ export default function (groupServices) {
 
     async function deleteGroupInternal(req, rsp) {
         const groupId = req.params.groupId
-        const group = await groupServices.deleteGroup(req.token, groupId)
+        const group = await groupServices.deleteGroup(req.user.token, groupId)
         rsp.status(200)
         return {
             status: `Task with id ${groupId} deleted with success`,
@@ -64,20 +64,20 @@ export default function (groupServices) {
 
     async function updateGroupInternal(req, rsp) {
         const groupId = req.params.groupId
-        const group = await groupServices.updateGroup(req.token, groupId, req.body)
+        const group = await groupServices.updateGroup(req.user.token, groupId, req.body)
         rsp.status(200)
         return {
             status: `Task with id ${groupId}updated with success`,
             group: group
         }
     }
-
     async function addMovieToGroupInternal(req, rsp) {
         const groupId = req.params.groupId
         const movieId = req.body.id
         const movieTitle = req.body.title
         const movieDuration = req.body.runtimeMins
-        const movie = await groupServices.addMovieToGroup(req.token, groupId, movieId, movieTitle, movieDuration)
+        const movieImage = req.body.image
+        const movie = await groupServices.addMovieToGroup(req.user.token, groupId, movieId, movieTitle, movieDuration,movieImage)
         rsp.status(200)
         return {
             status: `Movie with ${movieId} added to group ${groupId}`,
@@ -88,7 +88,7 @@ export default function (groupServices) {
     async function removeMovieFromGroupInternal(req, rsp) {
         const groupId = req.params.groupId
         const movieId = req.params.movieId
-        const movie = await groupServices.removeMovieFromGroup(req.token, groupId, movieId)
+        const movie = await groupServices.removeMovieFromGroup(req.user.token, groupId, movieId)
         rsp.status(200)
         return {
             status: `Movie with ${movieId} removed from group ${groupId}`,
@@ -109,15 +109,6 @@ export default function (groupServices) {
 
     function handleRequest(handler) {
         return async function (req, rsp) {
-            const BEARER_STR = "Bearer "
-            const tokenHeader = req.get("Authorization")
-            if (!(tokenHeader && tokenHeader.startsWith(BEARER_STR) && tokenHeader.length > BEARER_STR.length)) {
-                rsp
-                    .status(401)
-                    .json({error: `Invalid authentication token`})
-                return
-            }
-            req.token = tokenHeader.split(" ")[1]
             try {
                 let body = await handler(req, rsp)
                 rsp.json(body)

@@ -13,6 +13,29 @@
             <form action = "/groups/{{../group.id}}/movies/{{this.id}}/delete" method = "POST">
                     <input type="submit" value="Delete movie">
             </form>
+
+            <div>
+                <input type="button" value="Delete Movie With Script" id="m1">
+
+                <script type="application/ecmascript">
+                    const btn = document.querySelector("#m1")
+                    btn.onclick = handleClick
+                    async function handleClick() {
+                        const partsOfThePath = location.pathname.split('/')
+                        const url = `/api${location.pathname}/movies/{{this.id}}`
+                       const options = {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer {{../user.token}}'
+                            }
+                        }
+                        const response = await fetch(url, options)
+                        if(response.ok) {
+                            location = `/groups/${partsOfThePath[2]}`
+                        }
+                    }
+                </script>
+            </div>
         </li>
     {{/each}}
 </ul>
@@ -23,6 +46,29 @@
             <input type="submit" value="Delete group">
         </form>
     </div>
+
+    <div>
+        <input type="button" value="Delete Group With Script" id="g1">
+
+        <script type="application/ecmascript">
+            const btn = document.querySelector("#g1")
+            btn.onclick = handleClick
+            async function handleClick() {
+                const url = `/api${location.pathname}`
+                const options = {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer {{user.token}}'
+                    }
+                }
+                const response = await fetch(url, options)
+                if(response.ok) {
+                    location = '/groups'
+                }
+            }
+        </script>
+    </div>
+
     <div class="dt-column">
         <form action = "/groups/{{group.id}}/uptadeGroup" method = "GET">
             <input type="submit" value="Uptade group">
@@ -30,7 +76,7 @@
     </div>
 </div>
 
-<input type="button" value="Delete task with client script" id="b1">
+
 
 
 

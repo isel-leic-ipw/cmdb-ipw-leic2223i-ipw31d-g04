@@ -1,7 +1,7 @@
 
 {{#if user}}
     <form class="d-flex" role="search" method="POST" action="/logout">
-        <h3 style="align-self: center"{{user.username}} </h3>
+        <h3 style="align-self: center" style ="text-decoration-color: #2196F3"> {{user.username}} </h3>
         <button class="btn btn-outline-success" type="submit">Logout</button>
     </form>
 {{else}}
