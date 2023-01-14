@@ -45,7 +45,8 @@ export async function createNewUser(userName, password, userEmail){
         email: userEmail,
         token: crypto.randomUUID()
     }
-    return post(URI_MANAGER.create('users'), newUser)
+    const rsp =  post(URI_MANAGER.create('users'), newUser)
+    return rsp
 }
 
 function createUserFromElastic(UserElastic) {

@@ -66,7 +66,11 @@ export default function(services) {
 
     async function signup(req, rsp) {
         try {
-            let user = await services.signup(req.body.username, req.body.email, req.body.password, req.body.passwordConfirm)
+            let singupUser = await services.signup(req.body.username, req.body.email, req.body.password, req.body.passwordConfirm)
+            let user = await services.validateCredentials(req.body.username, req.body.password)
+            if(user) {
+                return req.login(user, (err) => rsp.redirect('/groups'))
+            }
             rsp.redirect('/groups')
         } catch(e) {
             const response = toHttpResponse(e)

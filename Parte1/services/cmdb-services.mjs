@@ -47,7 +47,7 @@ export default function (groupsData, usersData, moviesData) {
         if(password != passwordConfirm) {
             throw errors.PASSWORDS_DO_NOT_MATCH()
         }
-        await createUser(userName, password, userEmail)
+        return await createUser(userName, password, userEmail)
     }
 
     async function createUser(userName, password, userEmail) {
@@ -57,7 +57,7 @@ export default function (groupsData, usersData, moviesData) {
             // throw errors.INVALID_PARAMETER(userEmail)
             if (!isAString(password))
                 throw errors.INVALID_PARAMETER(password)
-        const user = await usersData.createNewUser(userName, password, userEmail)
+        return await usersData.createNewUser(userName, password, userEmail)
     }
 
     async function getMovieDetails(movieId) {
