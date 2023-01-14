@@ -11,13 +11,6 @@
           " aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link
-          {{#if signup}}
-            active disabled" 
-          {{/if}}
-          " aria-current="page" href="/signup">Signup</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link 
           {{#if groups}}
             active disabled" 
@@ -31,6 +24,16 @@
           {{/if}}
           " href="/groups/newGroup">CreateGroup</a>
         </li>
+          {{#if user}}
+          {{else}}
+              <li class="nav-item">
+              <a class="nav-link
+              {{#if signup}}
+                active disabled"
+              {{/if}}
+                 aria-current="page"  href="/signup">Signup</a>
+          {{/if}}
+          </li>
       </ul>
     </div>
       {{> logout}}

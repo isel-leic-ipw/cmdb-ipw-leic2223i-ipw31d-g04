@@ -1,4 +1,11 @@
 
-<form class="d-flex" role="search" method="POST" action="/logout">
+{{#if user}}
+    <form class="d-flex" role="search" method="POST" action="/logout">
+        <h3 style="align-self: center"{{user.username}} </h3>
         <button class="btn btn-outline-success" type="submit">Logout</button>
-</form>
+    </form>
+{{else}}
+    <form class="d-flex" role="search" method="GET" action="/login">
+        <button class="btn btn-outline-success" type="submit">Login</button>
+    </form>
+{{/if}}

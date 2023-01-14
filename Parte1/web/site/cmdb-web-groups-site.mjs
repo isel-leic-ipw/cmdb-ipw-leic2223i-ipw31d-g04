@@ -27,7 +27,7 @@ export default function (services) {
     }
 
     async function getHome (req, rsp) {
-        rsp.render("home", {title: "Home Page"})
+        rsp.render("home", {title: "Home Page",  user:req.user})
     }
 
     async  function  getCss (req, rsp) {
