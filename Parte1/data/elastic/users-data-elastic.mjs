@@ -7,7 +7,7 @@ import crypto from "crypto";
 const URI_MANAGER = uriManager()
 
 
-export async function getUser(userToken) {
+export async function getUserByToken(userToken) {
     const query = {
         query: {
             match: {
@@ -37,10 +37,12 @@ export async function getUserByName(userName) {
     return rsp
 }
 
-export async function createNewUser(userName, password){
+export async function createNewUser(userName, password, userEmail){
+
     let newUser = {
         name:userName,
         password:password,
+        email: userEmail,
         token: crypto.randomUUID()
     }
     return post(URI_MANAGER.create('users'), newUser)
@@ -48,14 +50,16 @@ export async function createNewUser(userName, password){
 
 function createUserFromElastic(UserElastic) {
     const userName = UserElastic._source.name
-   // const password = UserElastic._source.password
+    const password = UserElastic._source.password
     const userToken =  UserElastic._source.token
-    const userId = UserElastic._source.id
+    const userEmail =  UserElastic._source.email
+    const userId = UserElastic._id
     return {
         id: userId,
         name: userName,
-       // password:password,
-        userToken: userToken,
+        password:password,
+        email: userEmail,
+        token: userToken,
     }
 }
 

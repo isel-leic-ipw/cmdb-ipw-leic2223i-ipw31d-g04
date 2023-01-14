@@ -30,6 +30,11 @@ export default {
             code: 5,
             message: `Movie with id ${groupId} not found`
         }
+    },PASSWORDS_DO_NOT_MATCH: (groupId) => {
+        return {
+            code: 6,
+            message: `Passwords do not match`
+        }
     }
 
 }

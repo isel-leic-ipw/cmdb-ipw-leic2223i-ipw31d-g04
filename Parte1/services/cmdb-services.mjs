@@ -1,9 +1,7 @@
 // não pode ter saber nem ter conhecimento do http,só tem a ver com a logica da aplicaçãoe, nao pode saber nada do request,response
 //este modulo tem como opera~çoes/meotod neste caso exportar como o gettask
 //todos recebem como parametro o taskID(que é o que vem no equest.params.id), mas supostamente eles nao podiam ter acesso a tudo que envolve http
-//import * as groupsData from '../data/imdb-data-mem.mjs'
-//import * as usersData from '../data/users-data.mjs'
-import  *as moviesData from '../data/cmdb-movies-data.mjs'
+
 import errors from '../errors.mjs'
 import {MAX_LIMIT} from "./services-constants.mjs";
 
@@ -25,11 +23,43 @@ export default function (groupsData, usersData, moviesData) {
         removeMovieFromGroup: removeMovieFromGroup,
         addMovieToGroup: addMovieToGroup,
         createUser:createUser,
+        signup: signup,
         searchMovies:searchMovies,
         searchByTitle:searchByTitle,
-        getMovieDetails:getMovieDetails
+        getMovieDetails:getMovieDetails,
+        validateCredentials:validateCredentials,
 
     }
+
+    async function validateCredentials(username, password) {
+        try {
+            const user = await usersData.getUserByName(username)
+
+            if(user.password != password) {
+                return null
+            }
+            return { username: user.name, token: user.token }
+        } catch(e) {
+            return null
+        }
+    }
+    async function signup (userName,  userEmail, password,passwordConfirm) {
+        if(password != passwordConfirm) {
+            throw errors.PASSWORDS_DO_NOT_MATCH()
+        }
+        await createUser(userName, password, userEmail)
+    }
+
+    async function createUser(userName, password, userEmail) {
+        if (!isAString(userName))
+            throw errors.INVALID_PARAMETER(userName)
+        if (!isAString(userEmail))
+            // throw errors.INVALID_PARAMETER(userEmail)
+            if (!isAString(password))
+                throw errors.INVALID_PARAMETER(password)
+        const user = await usersData.createNewUser(userName, password, userEmail)
+    }
+
     async function getMovieDetails(movieId) {
         if(!isAString(movieId)){
             errors.INVALID_PARAMETER(movieId)
@@ -68,14 +98,13 @@ export default function (groupsData, usersData, moviesData) {
     }
 
     async function getGroups(userToken, q, skip = 0, limit ) {//obtem os grupos todos, não precisa de parametros
-
-
         limit = Number(limit)
         skip = Number(skip)
         if(limit==0){
             limit = MAX_LIMIT
         }
-        const user = await usersData.getUser(userToken)
+        const user = await usersData.getUserByToken(userToken)
+
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
@@ -99,7 +128,7 @@ export default function (groupsData, usersData, moviesData) {
     }
 
     async function getGroupsById(userToken, groupId) {
-        const user = await usersData.getUser(userToken)
+        const user = await usersData.getUserByToken(userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
@@ -110,20 +139,10 @@ export default function (groupsData, usersData, moviesData) {
         throw errors.GROUP_NOT_FOUND(groupId)
     }
 
-    async function createUser(userName, password) {
-        if (!isAString(userName))
-            throw errors.INVALID_PARAMETER(userName)
-        //if (!isAString(userEmail))
-           // throw errors.INVALID_PARAMETER(userEmail)
-        if (!isAString(userEmail))
-            throw errors.INVALID_PARAMETER(password)
-        const user = await usersData.createNewUser(userName, password)
-
-        return user
-    }
 
     async function createGroup(userToken, groupToCreate) {
-        const user = await usersData.getUser(userToken)
+        const user = await usersData.getUserByToken
+        (userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
@@ -135,7 +154,7 @@ export default function (groupsData, usersData, moviesData) {
     }
 
     async function deleteGroup(userToken, groupId) {
-        const user = await usersData.getUser(userToken)
+        const user = await usersData.getUserByToken(userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
@@ -147,7 +166,7 @@ export default function (groupsData, usersData, moviesData) {
     }
 
     async function updateGroup(userToken, groupId, groupToUpdate) {
-        const user = await usersData.getUser(userToken)
+        const user = await usersData.getUserByToken(userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
@@ -159,7 +178,7 @@ export default function (groupsData, usersData, moviesData) {
     }
 
     async function removeMovieFromGroup(userToken, groupId, movieId) {
-        const user = await usersData.getUser(userToken)
+        const user = await usersData.getUserByToken(userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
@@ -175,7 +194,7 @@ export default function (groupsData, usersData, moviesData) {
     }
 
     async function addMovieToGroup(userToken, groupId, movieId, title, duration,imgage) {
-        const user = await usersData.getUser(userToken)
+        const user = await usersData.getUserByToken(userToken)
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }

@@ -21,6 +21,7 @@ export default function(e) {
         case 3: return new HttpErrorResponse(HTTP_STATUS_CODES.NOT_FOUND, e.message, e.description)
         case 4: return new HttpErrorResponse(HTTP_STATUS_CODES.CONFLICT, e.message, e.description)
         case 5: return new HttpErrorResponse(HTTP_STATUS_CODES.NOT_FOUND, e.message, e.description)
+        case 6: return new HttpErrorResponse(HTTP_STATUS_CODES.BAD_REQUEST, e.message, e.description)
         default: return new HttpErrorResponse(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, "Internal error. Contact you teacher!")
     }
 }

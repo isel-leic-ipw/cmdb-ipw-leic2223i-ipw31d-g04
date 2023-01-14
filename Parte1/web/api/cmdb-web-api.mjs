@@ -1,6 +1,6 @@
 //verifyauthentication é usado para verificar se ha token se nao ha dá logo resposta;
 //é uma funcao intermedia
-import toHttpResponse from './response-errors.mjs'
+import toHttpResponse from '../response-errors.mjs'
 import errors from '../../errors.mjs'
 //import {handle} from "express/lib/router/index.js";
 //import * as groupServices from '../services/cmdb-services.mjs'

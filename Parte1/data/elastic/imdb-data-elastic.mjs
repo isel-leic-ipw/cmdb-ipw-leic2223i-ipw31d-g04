@@ -106,31 +106,5 @@ export async function removeMovieFromGroup(userId, groupId, movieId) {
     }
     const newGroup = group
 
-    console.log('groupDELETE', newGroup)
     return await newGroupUpdated(userId, groupId, newGroup)
 }
-
-
-/*
-export async function getGroups(userId,q,skip,limit){
-    return fetch(baseURL + '/groups/_search/' , {accept: "application/json"}
-        .then(response =>response.json())
-        .then(body => body.hits.hits.map(createGroupFromElastic))
-        .then(groups => filterGroups(groups)))
-
-    function filterGroups (groups){
-        if (q) q = q.toUpperCase()
-        const predicate = q ? g => g.name.toUpperCase().includes(q) : g => true
-        const retGroups = groups
-            .filter(g => g.userId == userId)
-            .filter(predicate)
-        const end = limit != Infinity ? (skip + limit) : retGroups.length
-        return retGroups.slice(skip,end)
-    }
-    function createGroupFromElastic(groupElastic){
-        let group = groupElastic._source
-        group.id = groupElastic._id
-        return group
-    }
-}
- */

@@ -1,30 +1,29 @@
 
 import url from 'url'
-import toHttpResponse from "../api/response-errors.mjs";
+import toHttpResponse from "../response-errors.mjs";
 
-const HAMMER_TOKEN = 'ef604e80-a351-4d13-b78f-c888f3e63b60'
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
-export default function (groupServices) {
+export default function (services) {
     // Validate argument
-    if (!groupServices) {
+    if (!services) {
         throw errors.INVALID_PARAMETER('tasksServices')
     }
     return {
         getHome: getHome,
         getCss: getCss,
+        getMovieDetails:getMovieDetails, // not handler
+        searchMovies:searchMovies,// not handler
         getGroup: handleRequest(getGroup),
         getGroups: handleRequest(getGroups),
         createGroup: handleRequest(createGroup),
         updateGroup: handleRequest(updateGroup),
         deleteGroup: handleRequest(deleteGroup),
-        searchMovies:handleRequest(searchMovies),
-        getMovieDetails:handleRequest(getMovieDetails),
-        addMovieToGroup:handleRequest(addMovieToGroup),
         removeMovieFromGroup:handleRequest(removeMovieFromGroup),
         addMovieToGroupView:handleRequest(addMovieToGroupView),
-        getNewGroup: getNewGroup,
-        getUptadeGroup:getUptadeGroup,
+        addMovieToGroup:handleRequest(addMovieToGroup),
+        getNewGroup: handleRequest(getNewGroup), // handler
+        getUptadeGroup:handleRequest(getUptadeGroup), // handler
     }
 
     async function getHome (req, rsp) {
@@ -37,54 +36,54 @@ export default function (groupServices) {
 
     async function getMovieDetails(req, rps){
         const movieId = req.params.movieId
-        const movie = await groupServices.getMovieDetails(movieId)
-        return {name: "movie", data : {title: 'Movie Details', movie: movie}}
+        const movie = await services.getMovieDetails(movieId)
+        rps.render("movie", {title: 'Movie Details', movie: movie})
     }
 
     async function searchMovies(req, rps) {
-        const movies = await groupServices.searchMovies(req.query.limit,req.query.title)
-        return  {name:'movies', data : {title: 'Movies', movies:movies}}
+        const movies = await services.searchMovies(req.query.limit,req.query.title)
+        rps.render('movies', {title: 'Movies', movies:movies} )
     }
 
     async  function  getGroup (req, rsp) {
         const groupId = req.params.groupId
-        const group = await groupServices.getGroupsById(req.token, groupId)
+        const group = await services.getGroupsById(req.user.token, groupId)
         return {name: 'group', data :group}
     }
 
     async function getGroups(req, rsp) {
-        const groups =  await groupServices.getGroups(req.token, req.query.q, req.query.skip, req.query.limit)
+        const groups =  await services.getGroups(req.user.token, req.query.q, req.query.skip, req.query.limit)
         return {name: 'groups', data : {title: 'Groups', groups:groups}}
     }
 
     async function getNewGroup (req,rsp){
-        rsp.render('newGroup')
+        return {name: 'newGroup', data : {}}
     }
 
     async function getUptadeGroup (req,rsp){
-        const group = await groupServices.getGroupsById(HAMMER_TOKEN,req.params.groupId)
-        rsp.render("uptadeGroup", {name: group.name, description: group.description, id : req.params.groupId} )
+        const group = await services.getGroupsById(req.user.token,req.params.groupId)
+        return  {name: "uptadeGroup", data : {name: group.name, description: group.description, id : req.params.groupId} }
     }
 
     async function createGroup(req, rsp) {
-        let newGroup = await groupServices.createGroup(req.token, req.body)
+        let newGroup = await services.createGroup(req.user.token, req.body)
         rsp.redirect('/groups')
     }
     async function deleteGroup(req, rsp) {
         const groupId = req.params.groupId
-        const group = await groupServices.deleteGroup(req.token, groupId)
+        const group = await services.deleteGroup(req.user.token, groupId)
         rsp.redirect('/groups')
     }
     async function updateGroup(req, rsp) {
         const groupId = req.params.groupId
-        const group = await groupServices.updateGroup(req.token, groupId, req.body)
+        const group = await services.updateGroup(req.user.token, groupId, req.body)
         rsp.redirect(`/groups/${groupId}`)
     }
 
     async function addMovieToGroupView(req, rsp){
         const movieId = req.params.movieId
         console.log("movieId",movieId)
-        let groups =  await groupServices.getGroups(req.token, req.query.q, req.query.skip, req.query.limit)
+        let groups =  await services.getGroups(req.user.token, req.query.q, req.query.skip, req.query.limit)
         groups = {
             groups:groups,
             movieId:movieId
@@ -96,8 +95,8 @@ export default function (groupServices) {
         const groupId = req.params.groupId
         const movieId = req.params.movieId
         console.log("site" , movieId)
-        const movie = await groupServices.getMovieDetails(movieId)
-        const addMovie = await groupServices.addMovieToGroup(req.token, groupId, movieId, movie.title, movie.runtimeMins,movie.image)
+        const movie = await services.getMovieDetails(movieId)
+        const addMovie = await services.addMovieToGroup(req.user.token, groupId, movieId, movie.title, movie.runtimeMins,movie.image)
         rsp.redirect(`/groups/${groupId}`)
     }
 
@@ -105,26 +104,19 @@ export default function (groupServices) {
     async function removeMovieFromGroup(req, rsp) {
         const groupId = req.params.groupId
         const movieId = req.params.movieId
-        const movie = await groupServices.removeMovieFromGroup(req.token, groupId, movieId)
+        const movie = await services.removeMovieFromGroup(req.user.token, groupId, movieId)
         rsp.redirect(`/groups/${groupId}`)
     }
 
 
     function handleRequest(handler) {
-        // while we dont have authentication in site interface,
-        // let's hardcode a token for one user '
-
-        const HAMMER_TOKEN = 'ef604e80-a351-4d13-b78f-c888f3e63b60'
         return async function (req, rsp) {
-            req.token = HAMMER_TOKEN
             try {
                 let view = await handler(req, rsp)
                 if(view) {
                     rsp.render(view.name, view.data)
                 }
             } catch (e) {
-                // hammer time again, we are in an HTML response format
-                // returning errors in Json format
                 const response =  toHttpResponse(e)
                 rsp.status(response.status).json({error: response.body})
             }

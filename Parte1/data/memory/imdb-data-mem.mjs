@@ -1,4 +1,4 @@
-import {MAX_LIMIT} from "../services/services-constants.mjs";
+import {MAX_LIMIT} from "../../services/services-constants.mjs";
 
 
 const NUM_GROUPS = 3
