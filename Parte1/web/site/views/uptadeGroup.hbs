@@ -1,8 +1,8 @@
 <h2>Uptade Group</h2>
-<form action="/groups/{{id}}" method="POST">
-    <p>Group name: <input type="text" name="name" value="{{name}}"></p>
+<form action="/groups/{{group.id}}" method="POST">
+    <p>Group name: <input type="text" name="name" value="{{group.name}}"></p>
     <p>
-        Group description: <textarea type="text" name="description"  value="{{description}} ">
+        Group description: <textarea type="text" name="description"  value="{{group.description}} ">
     </textarea>
     </p>
     <input type="submit" value="Uptade">

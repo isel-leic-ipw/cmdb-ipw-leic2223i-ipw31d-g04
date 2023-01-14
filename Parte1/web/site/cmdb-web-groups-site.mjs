@@ -37,32 +37,32 @@ export default function (services) {
     async function getMovieDetails(req, rps){
         const movieId = req.params.movieId
         const movie = await services.getMovieDetails(movieId)
-        rps.render("movie", {title: 'Movie Details', movie: movie})
+        rps.render("movie", {title: 'Movie Details', movie: movie, user:req.user})
     }
 
     async function searchMovies(req, rps) {
         const movies = await services.searchMovies(req.query.limit,req.query.title)
-        rps.render('movies', {title: 'Movies', movies:movies} )
+        rps.render('movies', {title: 'Movies', movies:movies, user:req.user} )
     }
 
     async  function  getGroup (req, rsp) {
         const groupId = req.params.groupId
         const group = await services.getGroupsById(req.user.token, groupId)
-        return {name: 'group', data :group}
+        return {name: 'group', data :{ group: group, user:req.user}}
     }
 
     async function getGroups(req, rsp) {
         const groups =  await services.getGroups(req.user.token, req.query.q, req.query.skip, req.query.limit)
-        return {name: 'groups', data : {title: 'Groups', groups:groups}}
+        return {name: 'groups', data : {title: 'Groups', groups:groups, user:req.user}}
     }
 
     async function getNewGroup (req,rsp){
-        return {name: 'newGroup', data : {}}
+        return {name: 'newGroup', data : { user: req.user}}
     }
 
     async function getUptadeGroup (req,rsp){
         const group = await services.getGroupsById(req.user.token,req.params.groupId)
-        return  {name: "uptadeGroup", data : {name: group.name, description: group.description, id : req.params.groupId} }
+        return  {name: "uptadeGroup", data : {group:group, user:req.user} }
     }
 
     async function createGroup(req, rsp) {
@@ -88,7 +88,7 @@ export default function (services) {
             groups:groups,
             movieId:movieId
         }
-        return {name: 'addMovie', data :{groups:groups}}
+        return {name: 'addMovie', data :{groups:groups, user:req.user}}
     }
 
     async function addMovieToGroup(req, rsp) {

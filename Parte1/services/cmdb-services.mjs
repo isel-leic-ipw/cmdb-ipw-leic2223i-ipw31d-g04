@@ -158,11 +158,11 @@ export default function (groupsData, usersData, moviesData) {
         if (!user) {
             throw errors.USER_NOT_FOUND()
         }
-        const group = await groupsData.deleteGroup( groupId, user.id,)
+        const group = await groupsData.getGroupById(user.id , groupId)
         if (!group) {
             throw errors.GROUP_NOT_FOUND(groupId)
         }
-        return group
+        await groupsData.deleteGroup( groupId, user.id,)
     }
 
     async function updateGroup(userToken, groupId, groupToUpdate) {

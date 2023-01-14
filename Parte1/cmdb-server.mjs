@@ -69,16 +69,16 @@ app.get('/site.css', webSiteGroups.getCss)
 app.get("/populars",webSiteGroups.searchMovies)
 app.get('/movies/:movieId',webSiteGroups.getMovieDetails)
 // Authenticated routes
-app.post('/groups/:groupId/delete',webSiteGroups.deleteGroup)
-app.post('/groups/:groupId',webSiteGroups.updateGroup)
+app.post('/groups/:groupId/delete',webSiteGroups.deleteGroup) // Client code for PART3
+app.post('/groups/:groupId',webSiteGroups.updateGroup)  // Client code for PART3
 app.get('/groups/newGroup',webSiteGroups.getNewGroup)
 app.get('/groups/:groupId/uptadeGroup',webSiteGroups.getUptadeGroup)
 app.get('/groups/:groupId', webSiteGroups.getGroup)
 app.get('/groups',webSiteGroups.getGroups)
-app.post('/groups', webSiteGroups.createGroup)
+app.post('/groups', webSiteGroups.createGroup) // Client code for PART3
 app.get("/groups/movies/:movieId",webSiteGroups.addMovieToGroupView)
-app.post("/groups/:groupId/movies/:movieId/put",webSiteGroups.addMovieToGroup)
-app.post("/groups/:groupId/movies/:movieId/delete",webSiteGroups.removeMovieFromGroup)
+app.post("/groups/:groupId/movies/:movieId/put",webSiteGroups.addMovieToGroup)  // Client code for PART3
+app.post("/groups/:groupId/movies/:movieId/delete",webSiteGroups.removeMovieFromGroup) // Client code for PART3
 
 
 

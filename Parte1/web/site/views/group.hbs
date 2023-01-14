@@ -1,16 +1,16 @@
-<h2>{{name}}</h2>
+<h2>{{group.name}}</h2>
 <div style="text-align:left">
-    <p>Description: {{description}}</p>
+    <p>Description: {{group.description}}</p>
 </div>
 <div style="text-align:left">
-    <p>Total Duration: {{totalDuration}}</p>
+    <p>Total Duration: {{group.totalDuration}}</p>
 </div>
 <ul style="list-style: none;">
-    {{#each this.movies}}
+    {{#each group.movies}}
         <li>
             <p style=""> {{this.title}} </p>
             <a href="/movies/{{this.id}}"> <img src = {{this.image}} style="width:128px;height:176px;" ></a>
-            <form action = "/groups/{{../id}}/movies/{{this.id}}/delete" method = "POST">
+            <form action = "/groups/{{../group.id}}/movies/{{this.id}}/delete" method = "POST">
                     <input type="submit" value="Delete movie">
             </form>
         </li>
@@ -19,15 +19,17 @@
 
 <div class="row">
     <div class="dt-column">
-        <form action = "/groups/{{id}}/delete" method = "POST">
+        <form action = "/groups/{{group.id}}/delete" method = "POST">
             <input type="submit" value="Delete group">
         </form>
     </div>
     <div class="dt-column">
-        <form action = "/groups/{{id}}/uptadeGroup" method = "GET">
+        <form action = "/groups/{{group.id}}/uptadeGroup" method = "GET">
             <input type="submit" value="Uptade group">
         </form>
     </div>
 </div>
+
+
 
 
