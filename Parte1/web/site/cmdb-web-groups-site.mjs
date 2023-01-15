@@ -1,6 +1,7 @@
 
 import url from 'url'
 import toHttpResponse from "../response-errors.mjs";
+import express from "express";
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
@@ -9,22 +10,26 @@ export default function (services) {
     if (!services) {
         throw errors.INVALID_PARAMETER('tasksServices')
     }
-    return {
-        getHome: getHome,
-        getCss: getCss,
-        getMovieDetails:getMovieDetails, // not handler
-        searchMovies:searchMovies,// not handler
-        getGroup: handleRequest(getGroup),
-        getGroups: handleRequest(getGroups),
-        createGroup: handleRequest(createGroup),
-        updateGroup: handleRequest(updateGroup),
-        deleteGroup: handleRequest(deleteGroup),
-        removeMovieFromGroup:handleRequest(removeMovieFromGroup),
-        addMovieToGroupView:handleRequest(addMovieToGroupView),
-        addMovieToGroup:handleRequest(addMovieToGroup),
-        getNewGroup: handleRequest(getNewGroup), // handler
-        getUptadeGroup:handleRequest(getUptadeGroup), // handler
-    }
+    const router = express.Router()
+
+    //Public routes
+    router.get('/home', getHome)
+    router.get('/site.css', getCss)
+    router.get("/populars",searchMovies)
+    router.get('/movies/:movieId',getMovieDetails)
+    // Authenticated routes
+    router.post('/groups/:groupId/delete',handleRequest(deleteGroup)) // Client code for PART3
+    router.post('/groups/:groupId',handleRequest(updateGroup) ) // Client code for PART3
+    router.get('/groups/newGroup',handleRequest(getNewGroup))
+    router.get('/groups/:groupId/uptadeGroup',handleRequest(getUptadeGroup))
+    router.get('/groups/:groupId', handleRequest(getGroup))
+    router.get('/groups',handleRequest(getGroups))
+    router.post('/groups', handleRequest(createGroup)) // Client code for PART3
+    router.get("/groups/movies/:movieId",handleRequest(addMovieToGroupView))
+    router.post("/groups/:groupId/movies/:movieId/put",handleRequest(addMovieToGroup))  // Client code for PART3
+    router.post("/groups/:groupId/movies/:movieId/delete",handleRequest(removeMovieFromGroup)) // Client code for PART3
+
+    return router
 
     async function getHome (req, rsp) {
         rsp.render("home", {title: "Home Page",  user:req.user})

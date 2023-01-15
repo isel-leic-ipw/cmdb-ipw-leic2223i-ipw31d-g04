@@ -61,40 +61,10 @@ function getHome(req, rsp) {
 app.get('/', getHome)
 
 //SITE
-//Web site routes
- app.use(webSiteUsers)
- //Public routes
-app.get('/home', webSiteGroups.getHome)
-app.get('/site.css', webSiteGroups.getCss)
-app.get("/populars",webSiteGroups.searchMovies)
-app.get('/movies/:movieId',webSiteGroups.getMovieDetails)
-// Authenticated routes
-app.post('/groups/:groupId/delete',webSiteGroups.deleteGroup) // Client code for PART3
-app.post('/groups/:groupId',webSiteGroups.updateGroup)  // Client code for PART3
-app.get('/groups/newGroup',webSiteGroups.getNewGroup)
-app.get('/groups/:groupId/uptadeGroup',webSiteGroups.getUptadeGroup)
-app.get('/groups/:groupId', webSiteGroups.getGroup)
-app.get('/groups',webSiteGroups.getGroups)
-app.post('/groups', webSiteGroups.createGroup) // Client code for PART3
-app.get("/groups/movies/:movieId",webSiteGroups.addMovieToGroupView)
-app.post("/groups/:groupId/movies/:movieId/put",webSiteGroups.addMovieToGroup)  // Client code for PART3
-app.post("/groups/:groupId/movies/:movieId/delete",webSiteGroups.removeMovieFromGroup) // Client code for PART3
-
-
-
-
-
+app.use(webSiteUsers)
+app.use(webSiteGroups)
 // API
-app.get("/api/populars",webApi.searchPopular)
-app.get("/api/populars/:title", webApi.searchByTitle)
-app.post("/api/users",webApi.createNewUser)  //
-app.get("/api/groups",webApi.getGroups)  // obter todos os grupos
-app.get("/api/groups/:groupId",webApi.getGroupsById) // obter um grupo
-app.delete("/api/groups/:groupId",webApi.deleteGroup) // obter um grupo
-app.post("/api/groups",webApi.createGroup) // criar grupo
-app.put("/api/groups/:groupId/movies/:movieId",webApi.addMovieToGroup) // obter um grupo
-app.delete("/api/groups/:groupId/movies/:movieId",webApi.removeMovieFromGroup) // obter um grupo
-app.put("/api/groups/:groupId",webApi.updateGroup) // editar grupo
+app.use(webApi)
 
 app.listen(PORT, () => console.log(`Server listening in http://localhost:${PORT}`))
 //app.listen(Port, ()=>console.log("Listening on PORT:" + Port))    //esta mal temos que alterar

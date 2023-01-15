@@ -13,10 +13,7 @@
             <form action = "/groups/{{../group.id}}/movies/{{this.id}}/delete" method = "POST">
                     <input type="submit" value="Delete movie">
             </form>
-
-            <div>
                 <input type="button" value="Delete Movie With Script" id="m1">
-
                 <script type="application/ecmascript">
                     const btn = document.querySelector("#m1")
                     btn.onclick = handleClick
@@ -35,7 +32,6 @@
                         }
                     }
                 </script>
-            </div>
         </li>
     {{/each}}
 </ul>

@@ -2,6 +2,7 @@
 //é uma funcao intermedia
 import toHttpResponse from '../response-errors.mjs'
 import errors from '../../errors.mjs'
+import express from "express";
 //import {handle} from "express/lib/router/index.js";
 //import * as groupServices from '../services/cmdb-services.mjs'
 //exporta para o exterior,que tem o valor retornado pela funcao verifyAuthentication
@@ -11,39 +12,43 @@ export default function (groupServices) {
     if (!groupServices) {
         throw errors.INVALID_PARAMETER('tasksServices')
     }
-    return {
-        getGroups: handleRequest(getGroupsInternal),
-        getGroupsById:  handleRequest(getGroupsByIdInternal),
-        createGroup: handleRequest(createGroupInternal),
-        deleteGroup: handleRequest(deleteGroupInternal),
-        updateGroup: handleRequest(updateGroupInternal),
-        addMovieToGroup: handleRequest(addMovieToGroupInternal),
-        removeMovieFromGroup: handleRequest(removeMovieFromGroupInternal),
-        createNewUser: handleRequest(createNewUserInternal),
-        searchPopular: handleRequest(searchPopularInternal),
-        searchByTitle: handleRequest(searchByTitleInternal)
-    }
 
-    async function searchPopularInternal(req, rps) {
+    const router = express.Router()
+
+
+    router.get("/api/populars",searchPopular)
+    router.get("/api/populars/:title", searchByTitle)
+    router.post("/api/users",handleRequest(createNewUser))  //
+    router.get("/api/groups",handleRequest(getGroups))  // obter todos os grupos
+    router.get("/api/groups/:groupId",handleRequest(getGroupsById)) // obter um grupo
+    router.delete("/api/groups/:groupId",handleRequest(deleteGroup)) // obter um grupo
+    router.post("/api/groups",handleRequest(createGroup)) // criar grupo
+    router.put("/api/groups/:groupId/movies/:movieId",handleRequest(addMovieToGroup)) // obter um grupo
+    router.delete("/api/groups/:groupId/movies/:movieId",handleRequest(removeMovieFromGroup)) // obter um grupo
+    router.put("/api/groups/:groupId",handleRequest(updateGroup)) // editar grupo
+
+    return router
+
+    async function searchPopular(req, rps) {
         console.log(req.query.limit)
         return await groupServices.searchPopular(req.query.limit)
     }
-    async function searchByTitleInternal(req, rps) {
+    async function searchByTitle(req, rps) {
         const title = req.path.title
         const limit = req.query.limit
         return await groupServices.searchMovies(limit,title)
     }
 
-    async function getGroupsInternal(req, rsp) {
+    async function getGroups(req, rsp) {
         return await groupServices.getGroups(req.user.token, req.query.q, req.query.skip, req.query.limit)
     }
 
-    async function getGroupsByIdInternal(req, rsp) {
+    async function getGroupsById(req, rsp) {
         const groupId = req.params.groupId
         return groupServices.getGroupsById(req.user.token, groupId)
     }
 
-    async function createGroupInternal(req, rsp) {
+    async function createGroup(req, rsp) {
         let newGroup = await groupServices.createGroup(req.user.token, req.body)
         rsp.status(201)
         return {
@@ -52,7 +57,7 @@ export default function (groupServices) {
         }
     }
 
-    async function deleteGroupInternal(req, rsp) {
+    async function deleteGroup(req, rsp) {
         const groupId = req.params.groupId
         const group = await groupServices.deleteGroup(req.user.token, groupId)
         rsp.status(200)
@@ -62,7 +67,7 @@ export default function (groupServices) {
         }
     }
 
-    async function updateGroupInternal(req, rsp) {
+    async function updateGroup(req, rsp) {
         const groupId = req.params.groupId
         const group = await groupServices.updateGroup(req.user.token, groupId, req.body)
         rsp.status(200)
@@ -71,7 +76,7 @@ export default function (groupServices) {
             group: group
         }
     }
-    async function addMovieToGroupInternal(req, rsp) {
+    async function addMovieToGroup(req, rsp) {
         const groupId = req.params.groupId
         const movieId = req.body.id
         const movieTitle = req.body.title
@@ -85,7 +90,7 @@ export default function (groupServices) {
         }
     }
 
-    async function removeMovieFromGroupInternal(req, rsp) {
+    async function removeMovieFromGroup(req, rsp) {
         const groupId = req.params.groupId
         const movieId = req.params.movieId
         const movie = await groupServices.removeMovieFromGroup(req.user.token, groupId, movieId)
@@ -96,7 +101,7 @@ export default function (groupServices) {
         }
     }
 
-    async function createNewUserInternal(req, rps) {
+    async function createNewUser(req, rps) {
         const userName = req.body.userName
         const userEmail = req.body.userEmail
         const userPassword = req.body.userPassword
