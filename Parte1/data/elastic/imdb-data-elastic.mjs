@@ -62,6 +62,10 @@ export async function addMovieToGroup (userId, groupId, movie) {
     const newMovie= Object.assign(movie)
     const group = await getGroupById(userId, groupId)
 
+    const movieIdx = group.movies.findIndex(m => m.id == movie.id)
+    if (movieIdx != -1) {
+        return
+    }
 
     if (group.id == groupId) {
         group.movies.push(newMovie)

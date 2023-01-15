@@ -118,7 +118,8 @@ export default function (services) {
                 }
             } catch (e) {
                 const response =  toHttpResponse(e)
-                rsp.status(response.status).json({error: response.body})
+                rsp.status(response.status)
+                rsp.render('error', {message: response.body.message, description: response.body.description, user: req.user})
             }
         }
     }

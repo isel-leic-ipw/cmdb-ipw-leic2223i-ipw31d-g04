@@ -30,4 +30,3 @@ export async function getMovieById (id){
     }
     return myMovie
 }
-

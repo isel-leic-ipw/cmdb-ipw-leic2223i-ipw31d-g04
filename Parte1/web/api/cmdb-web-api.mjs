@@ -31,7 +31,7 @@ export default function (groupServices) {
     async function searchByTitleInternal(req, rps) {
         const title = req.path.title
         const limit = req.query.limit
-        return await groupServices.searchByTitle(title,limit)
+        return await groupServices.searchMovies(limit,title)
     }
 
     async function getGroupsInternal(req, rsp) {

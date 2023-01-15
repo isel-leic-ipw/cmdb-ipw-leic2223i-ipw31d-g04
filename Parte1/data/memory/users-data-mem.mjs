@@ -7,6 +7,7 @@ let users = new Array(NUM_USERS).fill(0, 0, NUM_USERS)
         return {
             id: idx,
             name: `User ${idx}`,
+            email: `user${idx}@gmail`,
             token: "ef604e80-a351-4d13-b78f-c888f3e63b6" + idx
         }
     })

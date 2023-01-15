@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "chai": "^4.3.7",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "data-uri-to-buffer": "^4.0.0",
@@ -27,5 +28,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
 }
